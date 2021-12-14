@@ -1,5 +1,6 @@
 import {ReactElement, ReactNode} from "react";
 import useBasicStyles from "./useBasicStyles";
+import Header from "./Header";
 
 
 export type DefaultLayoutProps = {
@@ -13,6 +14,7 @@ const BasicLayout = ({children} : DefaultLayoutProps) : ReactElement => {
     return (
         <div className={classes.root}>
             <div className={classes.content}>
+                <Header/>
                 <main className={classes.main}>{children}</main>
             </div>
         </div>
