@@ -1,24 +1,67 @@
-import {AppBar, Box, IconButton, Toolbar, Typography} from "@mui/material";
+import {
+    AppBar,
+    Box,
+    Drawer,
+    IconButton,
+    List,
+    ListItem,
+    ListItemIcon,
+    ListItemText,
+    Toolbar,
+    Typography
+} from "@mui/material";
 import MenuIcon from '@mui/icons-material/Menu';
+import InboxIcon from '@mui/icons-material/Inbox';
+import CheckIcon from '@mui/icons-material/Check';
+import {useState} from "react";
+import {Link} from "react-router-dom";
 
-const Header = () => (
-    <Box>
-        <AppBar position="static">
-            <Toolbar>
-                <IconButton
-                    size="large"
-                    edge="start"
-                    color="inherit"
-                    aria-label="menu"
+const Header = () => {
+    const [drawer, setDrawer] = useState(false);
+
+    return (
+        <Box>
+            <AppBar position="static">
+                <Toolbar>
+                    <IconButton
+                        size="large"
+                        edge="start"
+                        color="inherit"
+                        aria-label="menu"
+                        onClick={() => setDrawer(true)}
+                    >
+                        <MenuIcon/>
+                    </IconButton>
+                    <Typography variant="h6" component="div"
+                                sx={{flexGrow: 1, textAlign: 'center', paddingRight: '48px'}}>
+                        Simple To Do
+                    </Typography>
+                </Toolbar>
+            </AppBar>
+            <Drawer open={drawer} anchor={"left"} onClose={() => setDrawer(false)}>
+                <Box
+                    sx={{width: 250}}
+                    onClick={() => setDrawer(false)}
+                    onKeyDown={() => setDrawer(false)}
                 >
-                    <MenuIcon/>
-                </IconButton>
-                <Typography variant="h6" component="div" sx={{flexGrow: 1, textAlign: 'center', paddingRight: '48px'}}>
-                    Simple To Do
-                </Typography>
-            </Toolbar>
-        </AppBar>
-    </Box>
-)
+                    <List>
+                        <ListItem button component={Link} to='/' key={"Inbox"}>
+                            <ListItemIcon>
+                                <InboxIcon/>
+                            </ListItemIcon>
+                            <ListItemText primary="Inbox"/>
+                        </ListItem>
+                        <ListItem button component={Link} to='/completed' key={"Completed Task"}>
+                            <ListItemIcon>
+                                <CheckIcon/>
+                            </ListItemIcon>
+                            <ListItemText primary="Completed Task"/>
+                        </ListItem>
+                    </List>
+                </Box>
+            </Drawer>
+        </Box>
+    );
+}
 
 export default Header;

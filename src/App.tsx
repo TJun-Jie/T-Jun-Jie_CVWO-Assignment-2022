@@ -1,15 +1,15 @@
 import React from 'react';
-import logo from './logo.svg';
 import './App.css';
 import {ThemeProvider} from "@material-ui/core";
 import theme from "./layouts/basicTheme";
-import HomePage from "./pages/HomePage";
+import MainRouter from "./MainRouter";
+
 function App() {
-  return (
-      <ThemeProvider theme={theme}>
-        <HomePage></HomePage>
-      </ThemeProvider>
-  );
+    return (
+        <ThemeProvider theme={theme}>
+            <MainRouter/>
+        </ThemeProvider>
+    );
 }
 
 export default App;
