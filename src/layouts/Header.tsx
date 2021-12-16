@@ -15,9 +15,11 @@ import InboxIcon from '@mui/icons-material/Inbox';
 import CheckIcon from '@mui/icons-material/Check';
 import {useState} from "react";
 import {Link} from "react-router-dom";
+import {useTranslation} from "react-i18next";
 
 const Header = () => {
     const [drawer, setDrawer] = useState(false);
+    const {t} = useTranslation();
 
     return (
         <Box>
@@ -34,7 +36,7 @@ const Header = () => {
                     </IconButton>
                     <Typography variant="h6" component="div"
                                 sx={{flexGrow: 1, textAlign: 'center', paddingRight: '48px'}}>
-                        Simple To Do
+                        {t("appName")}
                     </Typography>
                 </Toolbar>
             </AppBar>
@@ -45,17 +47,17 @@ const Header = () => {
                     onKeyDown={() => setDrawer(false)}
                 >
                     <List>
-                        <ListItem button component={Link} to='/' key={"Inbox"}>
+                        <ListItem button component={Link} to='/'>
                             <ListItemIcon>
                                 <InboxIcon/>
                             </ListItemIcon>
-                            <ListItemText primary="Inbox"/>
+                            <ListItemText primary={t("inbox")}/>
                         </ListItem>
                         <ListItem button component={Link} to='/completed' key={"Completed Task"}>
                             <ListItemIcon>
                                 <CheckIcon/>
                             </ListItemIcon>
-                            <ListItemText primary="Completed Task"/>
+                            <ListItemText primary={t("completedTask")}/>
                         </ListItem>
                     </List>
                 </Box>
