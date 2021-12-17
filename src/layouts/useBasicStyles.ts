@@ -1,7 +1,6 @@
 import {createStyles, makeStyles} from "@mui/styles";
-import {Theme} from "@material-ui/core";
 
-const useBasicStyles = makeStyles((theme: Theme) =>
+const useBasicStyles = makeStyles((theme) =>
     createStyles({
         root: {
             minHeight: '100vh',

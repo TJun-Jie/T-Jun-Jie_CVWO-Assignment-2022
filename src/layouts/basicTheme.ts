@@ -1,24 +1,26 @@
-import { createTheme } from "@material-ui/core";
+import {createTheme} from '@mui/material/styles';
+
 
 const palette = {
-  primary: {
-    main: "#1c1c1c",
-    contrastText: "#fff",
-  },
-  secondary: {
-    main: "#FC4445",
-    contrastText: "#fff",
-  },
+    primary: {
+        main: "#F3F4F8",
+        contrastText: "#fff",
+    },
+    secondary: {
+        main: "#333333",
+        contrastText: "#fff",
+    },
 };
 
 const basicTheme = createTheme({
-  typography: {
-    button: {
-      textTransform: 'none',
+    typography: {
+        button: {
+            textTransform: 'none',
+        },
+        fontFamily: 'Robotto',
     },
-    fontFamily: 'Robotto',
-  },
-  palette,
+    palette,
 });
+
 
 export default basicTheme;

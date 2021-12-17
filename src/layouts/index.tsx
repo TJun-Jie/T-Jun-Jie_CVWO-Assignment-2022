@@ -1,6 +1,8 @@
 import {ReactElement, ReactNode} from "react";
 import useBasicStyles from "./useBasicStyles";
 import Header from "./Header";
+import {ThemeProvider} from "@mui/styles";
+import theme from "./basicTheme";
 
 
 export type DefaultLayoutProps = {
@@ -8,7 +10,7 @@ export type DefaultLayoutProps = {
 };
 
 
-const BasicLayout = ({children} : DefaultLayoutProps) : ReactElement => {
+const BasicLayout = ({children}: DefaultLayoutProps): ReactElement => {
     const classes = useBasicStyles();
 
     return (
@@ -18,6 +20,7 @@ const BasicLayout = ({children} : DefaultLayoutProps) : ReactElement => {
                 <main className={classes.main}>{children}</main>
             </div>
         </div>
+
     )
 
 }

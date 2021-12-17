@@ -1,14 +1,15 @@
 import React from 'react';
 import './App.css';
-import {ThemeProvider} from "@material-ui/core";
 import theme from "./layouts/basicTheme";
 import MainRouter from "./MainRouter";
+import {ThemeProvider} from "@mui/material/styles";
 
 function App() {
     return (
         <ThemeProvider theme={theme}>
             <MainRouter/>
         </ThemeProvider>
+
     );
 }
 

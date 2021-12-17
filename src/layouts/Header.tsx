@@ -17,13 +17,14 @@ import {useState} from "react";
 import {Link} from "react-router-dom";
 import {useTranslation} from "react-i18next";
 
+
 const Header = () => {
     const [drawer, setDrawer] = useState(false);
     const {t} = useTranslation();
 
     return (
         <Box>
-            <AppBar position="static">
+            <AppBar color="secondary" position="static">
                 <Toolbar>
                     <IconButton
                         size="large"
