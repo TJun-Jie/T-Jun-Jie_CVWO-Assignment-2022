@@ -1,8 +1,6 @@
 import {ReactElement, ReactNode} from "react";
 import useBasicStyles from "./useBasicStyles";
 import Header from "./Header";
-import {ThemeProvider} from "@mui/styles";
-import theme from "./basicTheme";
 
 
 export type DefaultLayoutProps = {
