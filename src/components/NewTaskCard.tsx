@@ -23,7 +23,7 @@ type NewTaskCardProps = {
 }
 
 const NewTaskCard = ({setShowTaskCard}: NewTaskCardProps) => {
-    const [label, setLabel] = useState('');
+    const [label, setLabel] = useState('test');
 
     return (
         <Box sx={{
