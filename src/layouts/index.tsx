@@ -15,7 +15,11 @@ const BasicLayout = ({children}: DefaultLayoutProps): ReactElement => {
         <div className={classes.root}>
             <div className={classes.content}>
                 <Header/>
-                <main className={classes.main}>{children}</main>
+                <main>
+                    <div className={classes.main}>
+                        {children}
+                    </div>
+                </main>
             </div>
         </div>
 

@@ -3,5 +3,8 @@
   "test": "test testt test",
   "inbox": "Inbox",
   "completedTask": "Completed Tasks",
-  "currentTask": "Current Tasks"
+  "currentTask": "Current Tasks",
+  "lowPriority": "Low Priority",
+  "mediumPriority": "Medium Priority",
+  "highPriority": "High Priority"
 }
