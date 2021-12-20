@@ -6,5 +6,6 @@
   "currentTask": "Current Tasks",
   "lowPriority": "Low Priority",
   "mediumPriority": "Medium Priority",
-  "highPriority": "High Priority"
+  "highPriority": "High Priority",
+  "completedTask": "Completed Task"
 }

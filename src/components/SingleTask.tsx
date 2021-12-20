@@ -12,7 +12,7 @@ import {SelectFieldStyles, TextFieldStyles} from "./NewTaskCard";
 import {Task} from "../shared/types/task";
 
 
-const SingleTask = ({id, title, endDate, startDate, description, priority}: Task) => {
+const SingleTask = ({id, title, endDate, startDate, description, priority, completed}: Task) => {
     const [open, setOpen] = useState(false);
 
     const handleClickOpen = () => {
@@ -26,7 +26,7 @@ const SingleTask = ({id, title, endDate, startDate, description, priority}: Task
         <>
             <ListItem sx={{paddingBottom: '0',}}>
                 <ListItemIcon>
-                    <Checkbox/>
+                    <Checkbox checked={completed}/>
                 </ListItemIcon>
                 <ListItemText onClick={handleClickOpen}
                               sx={{color: 'secondary.light', cursor: 'pointer'}}>{title}</ListItemText>

@@ -36,8 +36,15 @@ const Header = () => {
                         <MenuIcon/>
                     </IconButton>
                     <Typography variant="h6" component="div"
-                                sx={{flexGrow: 1, textAlign: 'center', paddingRight: '48px'}}>
-                        {t("appName")}
+                                sx={{
+                                    flexGrow: 1,
+                                    textAlign: 'center',
+                                    paddingRight: '48px',
+                                    '& a': {color: 'secondary.light', textDecoration: 'none'}
+                                }}>
+                        <Link to="/">
+                            {t("appName")}
+                        </Link>
                     </Typography>
                 </Toolbar>
             </AppBar>

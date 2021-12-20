@@ -15,6 +15,7 @@ const tempTask: Task = {
     endDate: new Date(),
     startDate: new Date(),
     priority: Priorities.LowPriority,
+    completed: false,
 }
 
 const HomePage = () => {
