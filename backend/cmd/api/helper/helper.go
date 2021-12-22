@@ -13,7 +13,7 @@ import (
 )
 
 func ConnectDB() *mongo.Collection {
-	clientOptions := options.Client().ApplyURI("mongodb+srv://jjtai:^8Q0ogRZo@cvwo-to-do.9wfav.mongodb.net/myFirstDatabase?retryWrites=true&w=majority")
+	clientOptions := options.Client().ApplyURI("mongodb+srv://jjtai:zMxPRmkThZRqCVmc@cvwo-to-do.9wfav.mongodb.net/myFirstDatabase?retryWrites=true&w=majority")
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 
@@ -24,7 +24,7 @@ func ConnectDB() *mongo.Collection {
 
 	fmt.Println("Connected to MongoDB!")
 
-	collection := client.Database("go_rest_api").Collection("books")
+	collection := client.Database("cvwo_rest_api").Collection("tasks")
 
 	return collection
 }
