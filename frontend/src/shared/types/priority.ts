@@ -1,7 +1,7 @@
-export type Task = {
+export type Priority = {
   _id: string;
   title: string;
   description: string;
-  priorityID: number;
+  priority: number;
   completed: boolean;
 };

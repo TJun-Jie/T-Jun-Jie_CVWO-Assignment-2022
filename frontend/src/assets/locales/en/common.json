@@ -7,5 +7,7 @@
   "lowPriority": "Low Priority",
   "mediumPriority": "Medium Priority",
   "highPriority": "High Priority",
-  "completedTask": "Completed Task"
+  "confirmChanges": "Confirm Changes",
+  "deleteTask": "Delete Task",
+  "cancel": "Cancel"
 }

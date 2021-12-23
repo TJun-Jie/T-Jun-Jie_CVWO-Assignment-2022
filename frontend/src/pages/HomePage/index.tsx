@@ -1,66 +1,104 @@
 import BasicLayout from "../../layouts";
-import {useTranslation} from "react-i18next";
+import { useTranslation } from "react-i18next";
 import NewTaskCard from "../../components/NewTaskCard";
-import {Box, Button, List, Typography} from "@mui/material";
-import {useState} from "react";
+import { Box, Button, CircularProgress, List, Typography } from "@mui/material";
+import { useEffect, useState } from "react";
 import SingleTask from "../../components/SingleTask";
-import {Task} from "../../shared/types/task";
 import useBasicStyles from "../../layouts/useBasicStyles";
-import {Priorities} from "../../shared/enum";
-
-const tempTask: Task = {
-    title: 'First task',
-    description: 'hello',
-    id: '123',
-    endDate: new Date(),
-    startDate: new Date(),
-    priority: Priorities.LowPriority,
-    completed: false,
-}
+import axios from "axios";
+import { Task } from "../../shared/types/task";
 
 const HomePage = () => {
-    const {t} = useTranslation();
-    const styles = useBasicStyles();
+  const { t } = useTranslation();
+  const styles = useBasicStyles();
 
-    const [showTaskCard, setShowTaskCard] = useState(false);
-    return (
-        <BasicLayout>
-            <div>
-                <Box sx={{height: "100px"}}/>
-                <Box
-                    sx={{
-                        width: "50%",
-                        marginLeft: "auto",
-                        marginRight: "auto",
-                        textAlign: "start",
-                    }}
-                >
-                    <Typography sx={{ml: "26.5px", color: 'secondary.light'}} variant="h5">
-                        {t("currentTask")}
-                    </Typography>
-                    <Box>
-                        <List>
-                            <SingleTask {...tempTask}  ></SingleTask>
-                        </List>
-                    </Box>
-                    {!showTaskCard && (
-                        <Button
-                            className={styles.button}
-                            color="secondary"
-                            variant="contained"
-                            onClick={() => setShowTaskCard(true)}
-                            sx={{ml: "26.5px"}}
-                        >
-                            Add Task
-                        </Button>
-                    )}
+  const [showTaskCard, setShowTaskCard] = useState(false);
 
-                    {showTaskCard && <NewTaskCard setShowTaskCard={setShowTaskCard}/>}
-                </Box>
-            </div>
-        </BasicLayout>
+  const [data, setData] = useState([]);
+  const [isLoaded, setIsLoaded] = useState(false);
+
+  const getData = async () => {
+    try {
+      const res = await axios.get("http://localhost:8000/v1/tasks");
+      setData(res.data);
+      setIsLoaded(true);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useEffect(() => {
+    getData();
+  }, []);
+
+  const renderTask = data ? (
+    data.map(
+      function (item: Task, i) {
+        return <SingleTask key={item._id} task={item} setData={setData} />;
+      },
+      [data]
     )
-        ;
+  ) : (
+    <div></div>
+  );
+
+  return (
+    <BasicLayout>
+      {isLoaded ? (
+        <div>
+          <Box sx={{ height: "100px" }} />
+          <Box
+            sx={{
+              width: "50%",
+              marginLeft: "auto",
+              marginRight: "auto",
+              textAlign: "start",
+            }}
+          >
+            <Typography
+              sx={{ ml: "26.5px", color: "secondary.light" }}
+              variant="h5"
+            >
+              {t("currentTask")}
+            </Typography>
+            <Box>
+              <List>{renderTask}</List>
+            </Box>
+            {!showTaskCard && (
+              <Button
+                className={styles.button}
+                color="secondary"
+                variant="contained"
+                onClick={() => setShowTaskCard(true)}
+                sx={{ ml: "26.5px" }}
+              >
+                Add Task
+              </Button>
+            )}
+
+            {showTaskCard && (
+              <NewTaskCard
+                setShowTaskCard={setShowTaskCard}
+                setData={setData}
+              />
+            )}
+          </Box>
+        </div>
+      ) : (
+        <Box
+          sx={{
+            width: "50%",
+            mx: "auto",
+            textAlign: "center",
+          }}
+        >
+          <Box sx={{ height: "100px" }}></Box>
+
+          <CircularProgress color="info" />
+        </Box>
+      )}
+    </BasicLayout>
+  );
 };
 
 export default HomePage;
