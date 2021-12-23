@@ -21,16 +21,22 @@ func main() {
 	r := mux.NewRouter()
 
   	// arrange our route
-	r.HandleFunc("/api/tasks", getTasks).Methods("GET")
-	r.HandleFunc("/api/tasks/{id}", getTask).Methods("GET")
-	r.HandleFunc("/api/tasks", createTask).Methods("POST")
-	r.HandleFunc("/api/tasks/{id}", updateTask).Methods("PUT")
-	r.HandleFunc("/api/tasks/{id}", deleteTask).Methods("DELETE")
+	r.HandleFunc("/v1/tasks", getTasks).Methods("GET")
+	r.HandleFunc("/v1/tasks/{id}", getTask).Methods("GET")
+	r.HandleFunc("/v1/tasks", createTask).Methods("POST")
+	r.HandleFunc("/v1/tasks/{id}", updateTask).Methods("PUT")
+	r.HandleFunc("/v1/tasks/{id}", deleteTask).Methods("DELETE")
   	// set our port address
 	log.Fatal(http.ListenAndServe(":8000", r))
 }
 
+func enableCors(w *http.ResponseWriter) {
+	(*w).Header().Set("Access-Control-Allow-Origin", "http://localhost:3000")
+}
+
+
 func getTasks(w http.ResponseWriter, r *http.Request) {
+	enableCors(&w)
 	w.Header().Set("Content-Type", "application/json")
 
 	var task [] models.Task
@@ -43,23 +49,20 @@ func getTasks(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Close the cursor once finished
-	/*A defer statement defers the execution of a function until the surrounding function returns.
-	simply, run cur.Close() process but after cur.Next() finished.*/
 	defer cur.Close(context.TODO())
 
 	for cur.Next(context.TODO()) {
 
 		// create a value into which the single document can be decoded
-		var tTask models.Task
-		// & character returns the memory address of the following variable.
-		err := cur.Decode(&tTask) // decode similar to deserialize process.
+		var Task models.Task
+
+		err := cur.Decode(&Task)
 		if err != nil {
 			log.Fatal(err)
 		}
 
 		// add item our array
-		task = append(task, tTask)
+		task = append(task, Task)
 	}
 
 	if err := cur.Err(); err != nil {
@@ -70,17 +73,15 @@ func getTasks(w http.ResponseWriter, r *http.Request) {
 }
 
 func getTask(w http.ResponseWriter, r *http.Request) {
-	// set header.
+	enableCors(&w)
+
 	w.Header().Set("Content-Type", "application/json")
 
 	var task models.Task
-	// we get params with mux.
 	var params = mux.Vars(r)
 
-	// string to primitive.ObjectID
 	id, _ := primitive.ObjectIDFromHex(params["id"])
 
-	// We create filter. If it is unnecessary to sort data for you, you can use bson.M{}
 	filter := bson.M{"_id": id}
 	err := collection.FindOne(context.TODO(), filter).Decode(&task)
 
@@ -92,15 +93,15 @@ func getTask(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(task)
 }
 
+
 func createTask(w http.ResponseWriter, r *http.Request) {
+	enableCors(&w)
 	w.Header().Set("Content-Type", "application/json")
 
 	var task models.Task
 
-	// we decode our body request params
 	_ = json.NewDecoder(r.Body).Decode(&task)
 
-	// insert our tTask model.
 	result, err := collection.InsertOne(context.TODO(), task)
 
 	if err != nil {
@@ -112,45 +113,43 @@ func createTask(w http.ResponseWriter, r *http.Request) {
 }
 
 func updateTask(w http.ResponseWriter, r *http.Request) {
+	enableCors(&w)
+
 	w.Header().Set("Content-Type", "application/json")
 
 	var params = mux.Vars(r)
 
-	//Get id from parameters
 	id, _ := primitive.ObjectIDFromHex(params["id"])
 
 	var task models.Task
 	
-	// Create filter
 	filter := bson.M{"_id": id}
 
-	// Read update model from body request
 	_ = json.NewDecoder(r.Body).Decode(&task)
-	// prepare update model.
 	update := bson.D{
-		{"$set", bson.D{
-			{"title", task.Title},
-			{"description", task.Description},
-			{"completed", task.Completed},
-			{"priorityID", task.PriorityID},
+		{ Key: "$set",Value:  bson.D{
+			{Key: "title",Value:  task.Title},
+			{Key: "description",Value:  task.Description},
+			{Key: "completed", Value: task.Completed},
+			{Key: "priorityID",Value:  task.PriorityID},
 		}},
 	}
 
-	err := collection.FindOneAndUpdate(context.TODO(), filter, update).Decode(&task)
+	result, err := collection.UpdateOne(context.TODO(), filter, update)
 
 	if err != nil {
 		helper.GetError(err, w)
 		return
 	}
 
-	task.ID = id
 
-
-	json.NewEncoder(w).Encode(task)
+	json.NewEncoder(w).Encode(result)
 }
 
 
 func deleteTask(w http.ResponseWriter, r *http.Request) {
+	enableCors(&w)
+
 	// Set header
 	w.Header().Set("Content-Type", "application/json")
 
@@ -160,13 +159,18 @@ func deleteTask(w http.ResponseWriter, r *http.Request) {
 	// string to primitve.ObjectID
 	id, err := primitive.ObjectIDFromHex(params["id"])
 
+	if err != nil {
+		helper.GetError(err, w)
+		return
+	}
+
 	// prepare filter.
 	filter := bson.M{"_id": id}
 
-	deleteResult, err := collection.DeleteOne(context.TODO(), filter)
+	deleteResult, mongoErr := collection.DeleteOne(context.TODO(), filter)
 
-	if err != nil {
-		helper.GetError(err, w)
+	if mongoErr != nil {
+		helper.GetError(mongoErr, w)
 		return
 	}
 
