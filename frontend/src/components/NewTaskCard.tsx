@@ -85,9 +85,11 @@ const NewTaskCard = ({ setShowTaskCard, setData }: NewTaskCardProps) => {
     onSubmit: async (values) => {
       try {
         await axios.post("http://localhost:8000/v1/tasks", {
-          ...values,
           completed: false,
+          ...values,
         });
+
+        // refetch data
         const res = await axios.get("http://localhost:8000/v1/tasks");
         setData(res.data);
         setShowTaskCard(false);
@@ -136,13 +138,15 @@ const NewTaskCard = ({ setShowTaskCard, setData }: NewTaskCardProps) => {
                 formik.touched.description && Boolean(formik.errors.description)
               }
               helperText={
-                formik.touched.description && Boolean(formik.errors.description)
+                formik.touched.description && formik.errors.description
               }
             />
             <Box sx={{ display: "flex", justifyContent: "space-between" }}>
               <FormControl
                 sx={{ minWidth: "100px", marginTop: "0.5rem" }}
-                error={Boolean(formik.errors.priorityID)}
+                error={
+                  formik.touched.priorityID && Boolean(formik.errors.priorityID)
+                }
               >
                 <InputLabel sx={{ color: "secondary.light" }} id="select-label">
                   Priority
@@ -154,10 +158,6 @@ const NewTaskCard = ({ setShowTaskCard, setData }: NewTaskCardProps) => {
                   name="priorityID"
                   value={formik.values.priorityID}
                   onChange={formik.handleChange}
-                  error={
-                    formik.touched.priorityID &&
-                    Boolean(formik.errors.priorityID)
-                  }
                 >
                   {renderPriorities}
                 </Select>

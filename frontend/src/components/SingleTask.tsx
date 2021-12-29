@@ -24,6 +24,7 @@ import { Priority } from "../shared/types/priority";
 import { useFormik } from "formik";
 import { useTranslation } from "react-i18next";
 import * as yup from "yup";
+import { useLocation } from "react-router-dom";
 
 const validationSchema = yup.object({
   title: yup.string().required("Please enter a title"),
@@ -39,10 +40,11 @@ type SingleTaskProps = {
 const SingleTask = ({ task, setData }: SingleTaskProps) => {
   const { t } = useTranslation();
 
-  const { title, description, priorityID, completed } = task;
-  const [open, setOpen] = useState(false);
+  const location = useLocation();
+  console.log(location);
 
-  const { _id: id } = task;
+  const { title, description, priorityID, completed, _id: id } = task;
+  const [open, setOpen] = useState(false);
 
   const [priorities, setPriorities] = useState([]);
 
@@ -78,8 +80,15 @@ const SingleTask = ({ task, setData }: SingleTaskProps) => {
   const handleDelete = async () => {
     try {
       await axios.delete(`http://localhost:8000/v1/tasks/${id}`);
-      const res = await axios.get("http://localhost:8000/v1/tasks");
+
+      const res = await axios.get(
+        `http://localhost:8000/v1/tasks${
+          location.pathname !== "/" ? location.pathname : ""
+        }`
+      );
+
       setData(res.data);
+      setOpen(false);
     } catch (error) {
       console.log(error);
     }
@@ -95,9 +104,10 @@ const SingleTask = ({ task, setData }: SingleTaskProps) => {
 
   const formik = useFormik({
     initialValues: {
-      title: task.title,
-      description: task.description,
-      priorityID: task.priorityID,
+      title: title,
+      description: description,
+      priorityID: priorityID,
+      completed: completed,
     },
     validationSchema: validationSchema,
     onSubmit: async (values) => {
@@ -105,7 +115,11 @@ const SingleTask = ({ task, setData }: SingleTaskProps) => {
         await axios.put(`http://localhost:8000/v1/tasks/${id}`, {
           ...values,
         });
-        const res = await axios.get("http://localhost:8000/v1/tasks");
+        const res = await axios.get(
+          `http://localhost:8000/v1/tasks${
+            location.pathname !== "/" ? location.pathname : ""
+          }`
+        );
         setData(res.data);
         setOpen(false);
       } catch (error) {
@@ -117,7 +131,14 @@ const SingleTask = ({ task, setData }: SingleTaskProps) => {
     <>
       <ListItem sx={{ paddingBottom: "0" }}>
         <ListItemIcon>
-          <Checkbox checked={completed} />
+          <Checkbox
+            checked={formik.values.completed}
+            name="completed"
+            onClick={() => {
+              formik.setFieldValue("completed", !formik.values.completed);
+              formik.handleSubmit();
+            }}
+          />
         </ListItemIcon>
         <ListItemText
           onClick={handleClickOpen}

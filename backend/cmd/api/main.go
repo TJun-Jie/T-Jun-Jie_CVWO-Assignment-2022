@@ -23,12 +23,12 @@ var priorityCollection = client.Database("cvwo_rest_api").Collection("priorities
 func main() {
 	r := mux.NewRouter()
 
-	
-
   	// arrange our route
 	r.HandleFunc("/v1/priorities", getPriorities).Methods("GET")
 	r.HandleFunc("/v1/priority/{id}", getPriority).Methods("GET")
 	r.HandleFunc("/v1/tasks", getTasks).Methods("GET")
+	r.HandleFunc("/v1/tasks/completed", getCompletedTasks).Methods("GET")
+	r.HandleFunc("/v1/tasks/priorities/{priorityID}", getTaskByPriority).Methods("GET")
 	r.HandleFunc("/v1/tasks/{id}", getTask).Methods("GET")
 	r.HandleFunc("/v1/tasks", createTask).Methods("POST", "OPTIONS")
 	r.HandleFunc("/v1/tasks/{id}", updateTask).Methods("PUT", "OPTIONS")
@@ -113,8 +113,9 @@ func getTasks(w http.ResponseWriter, r *http.Request) {
 
 	var task [] models.Task
 
+	filter := bson.D{{"completed", bson.D{{"$eq", false}}}}
 	// bson.M{},  we passed empty filter. So we want to get all data.
-	cur, err := tasksCollection.Find(context.TODO(), bson.M{})
+	cur, err := tasksCollection.Find(context.TODO(), filter)
 
 	if err != nil {
 		helper.GetError(err, w)
@@ -143,6 +144,89 @@ func getTasks(w http.ResponseWriter, r *http.Request) {
 
 	json.NewEncoder(w).Encode(task) // encode similar to serialize process.
 }
+
+func getCompletedTasks(w http.ResponseWriter, r *http.Request) {
+	enableCors(&w)
+	w.Header().Set("Content-Type", "text/html; charset=utf-8")
+
+	var task [] models.Task
+
+	filter := bson.D{{"completed", bson.D{{"$eq", true}}}}
+
+	// bson.M{},  we passed empty filter. So we want to get all data.
+	cur, err := tasksCollection.Find(context.TODO(), filter)
+
+	if err != nil {
+		helper.GetError(err, w)
+		return
+	}
+
+	defer cur.Close(context.TODO())
+
+	for cur.Next(context.TODO()) {
+
+		// create a value into which the single document can be decoded
+		var Task models.Task
+
+		err := cur.Decode(&Task)
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		// add item our array
+		task = append(task, Task)
+	}
+
+	if err := cur.Err(); err != nil {
+		log.Fatal(err)
+	}
+
+	json.NewEncoder(w).Encode(task) // encode similar to serialize process.
+}
+
+func getTaskByPriority(w http.ResponseWriter, r *http.Request) {
+	enableCors(&w)
+
+	w.Header().Set("Content-Type", "application/json")
+
+	var params = mux.Vars(r)
+	var task [] models.Task
+
+
+	if id, err1 := strconv.Atoi(params["priorityID"]); err1 == nil {
+		filter := bson.M{"priorityID": id}
+		cur, err := tasksCollection.Find(context.TODO(), filter)
+
+		if err != nil {
+			helper.GetError(err, w)
+			return
+		}
+	
+		defer cur.Close(context.TODO())
+	
+		for cur.Next(context.TODO()) {
+	
+			// create a value into which the single document can be decoded
+			var Task models.Task
+	
+			err := cur.Decode(&Task)
+			if err != nil {
+				log.Fatal(err)
+			}
+	
+			// add item our array
+			task = append(task, Task)
+		}
+	
+		if err := cur.Err(); err != nil {
+			log.Fatal(err)
+		}
+	
+		json.NewEncoder(w).Encode(task) // encode similar to serialize process.
+	}
+
+}
+
 
 func getTask(w http.ResponseWriter, r *http.Request) {
 	enableCors(&w)
@@ -174,10 +258,11 @@ func createTask(w http.ResponseWriter, r *http.Request) {
 		var task models.Task
 	
 		_ = json.NewDecoder(r.Body).Decode(&task)
+
 	
 		result, err := tasksCollection.InsertOne(context.TODO(), task)
 	
-	
+
 		if err != nil {
 			helper.GetError(err, w)
 			return
@@ -232,26 +317,30 @@ func deleteTask(w http.ResponseWriter, r *http.Request) {
 	// Set header
 	w.Header().Set("Content-Type", "application/json")
 
-	// get params
-	var params = mux.Vars(r)
 
-	// string to primitve.ObjectID
-	id, err := primitive.ObjectIDFromHex(params["id"])
+	if(r.Method == http.MethodDelete){
+		// get params
+		var params = mux.Vars(r)
 
-	if err != nil {
-		helper.GetError(err, w)
-		return
+		// string to primitve.ObjectID
+		id, err := primitive.ObjectIDFromHex(params["id"])
+
+		if err != nil {
+			helper.GetError(err, w)
+			return
+		}
+
+		// prepare filter.
+		filter := bson.M{"_id": id}
+
+		deleteResult, mongoErr := tasksCollection.DeleteOne(context.TODO(), filter)
+
+		if mongoErr != nil {
+			helper.GetError(mongoErr, w)
+			return
+		}
+
+		json.NewEncoder(w).Encode(deleteResult)
 	}
 
-	// prepare filter.
-	filter := bson.M{"_id": id}
-
-	deleteResult, mongoErr := tasksCollection.DeleteOne(context.TODO(), filter)
-
-	if mongoErr != nil {
-		helper.GetError(mongoErr, w)
-		return
-	}
-
-	json.NewEncoder(w).Encode(deleteResult)
 }

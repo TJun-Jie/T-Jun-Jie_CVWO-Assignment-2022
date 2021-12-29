@@ -10,9 +10,9 @@ const MainRouter = () => {
     <Routes>
       <Route path="/" element={<HomePage />} />
       <Route path="/completed" element={<CompletedTaskPage />} />
-      <Route path="/low-priority" element={<LowPriority />} />
-      <Route path="/medium-priority" element={<MediumPriority />} />
-      <Route path="/high-priority" element={<HighPriority />} />
+      <Route path="/priorities/1" element={<LowPriority />} />
+      <Route path="/priorities/2" element={<MediumPriority />} />
+      <Route path="/priorities/3" element={<HighPriority />} />
     </Routes>
   );
 };
