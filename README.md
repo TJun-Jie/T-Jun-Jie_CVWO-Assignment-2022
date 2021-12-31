@@ -6,7 +6,7 @@ Guide: https://docs.atlas.mongodb.com/getting-started/
 
 Once you created a database and cluster in MongoDB Atlas, get the connection string from Atlas.
 
-Example of connection string: "mongodb+srv://jjtai:<password>@cvwo-to-do.9wfav.mongodb.net/myFirstDatabase?retryWrites=true&w=majority"
+Example of connection string: "mongodb+srv://jjtai:\<password\>@cvwo-to-do.9wfav.mongodb.net/myFirstDatabase?retryWrites=true&w=majority"
 
 ![Screenshot](/admin/images/instructions/db_step_1.jpg)
 ![Screenshot](/admin/images/instructions/db_step_2.jpg)
@@ -14,6 +14,6 @@ Example of connection string: "mongodb+srv://jjtai:<password>@cvwo-to-do.9wfav.m
 
 Create a .env file in /backend/cmd/api (on the same level as main.go)
 
-In the env file, add MONGO_DB_URI = "mongodb+srv://jjtai:<password>@cvwo-to-do.9wfav.mongodb.net/myFirstDatabase?retryWrites=true&w=majority" (your connection string)
+In the env file, add MONGO_DB_URI = "mongodb+srv://jjtai:\<password\>@cvwo-to-do.9wfav.mongodb.net/myFirstDatabase?retryWrites=true&w=majority" (your connection string)
 
 In /backend/cmd/api, run the command "go run ./" in the command prompt. If everything works correctly, you should see the message "Connected to MongoDB!" in the command prompt
