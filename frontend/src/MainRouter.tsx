@@ -4,6 +4,7 @@ import CompletedTaskPage from "./pages/CompletedTaskPage";
 import LowPriority from "./pages/labels/LowPriority";
 import MediumPriority from "./pages/labels/MediumPriority";
 import HighPriority from "./pages/labels/HighPriority";
+import NotFound from "./pages/NotFound";
 
 const MainRouter = () => {
   return (
@@ -13,6 +14,7 @@ const MainRouter = () => {
       <Route path="/priorities/1" element={<LowPriority />} />
       <Route path="/priorities/2" element={<MediumPriority />} />
       <Route path="/priorities/3" element={<HighPriority />} />
+      <Route path="*" element={<NotFound />} />
     </Routes>
   );
 };

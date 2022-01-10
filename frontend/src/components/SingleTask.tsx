@@ -15,6 +15,7 @@ import {
   MenuItem,
   Select,
   TextField,
+  Typography,
 } from "@mui/material";
 import { useEffect, useState } from "react";
 import { SelectFieldStyles, TextFieldStyles } from "./NewTaskCard";
@@ -43,10 +44,10 @@ const SingleTask = ({ task }: SingleTaskProps) => {
   const dispatch = useAppDispatch();
 
   const location = useLocation();
-  console.log(location);
 
   const { title, description, priorityID, completed, _id: id } = task;
   const [open, setOpen] = useState(false);
+  const [error, setError] = useState("");
 
   const [priorities, setPriorities] = useState([]);
 
@@ -92,7 +93,7 @@ const SingleTask = ({ task }: SingleTaskProps) => {
       dispatch(setTasks(res.data));
       setOpen(false);
     } catch (error) {
-      console.log(error);
+      setError(t("error"));
     }
   };
 
@@ -125,7 +126,7 @@ const SingleTask = ({ task }: SingleTaskProps) => {
         dispatch(setTasks(res.data));
         setOpen(false);
       } catch (error) {
-        alert(error);
+        setError(t("error"));
       }
     },
   });
@@ -157,7 +158,17 @@ const SingleTask = ({ task }: SingleTaskProps) => {
         <DialogTitle sx={{ color: "secondary.light", marginBottom: "0.2rem" }}>
           Edit Task
         </DialogTitle>
+
         <DialogContent sx={{ paddingTop: "5px !important" }}>
+          {error ? (
+            <Typography
+              sx={{ color: "red", fontSize: "1.3rem", marginBottom: "0.8rem" }}
+            >
+              {error}
+            </Typography>
+          ) : (
+            ""
+          )}
           <form onSubmit={formik.handleSubmit}>
             <TextField
               sx={TextFieldStyles}

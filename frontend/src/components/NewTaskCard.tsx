@@ -9,10 +9,12 @@ import {
   MenuItem,
   Select,
   TextField,
+  Typography,
 } from "@mui/material";
 import axios from "axios";
 import { useFormik } from "formik";
 import { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import * as yup from "yup";
 import { useAppDispatch } from "../redux/hooks";
 import { setTasks } from "../redux/slices/taskSlice";
@@ -48,6 +50,8 @@ type NewTaskCardProps = {
 const NewTaskCard = ({ setShowTaskCard }: NewTaskCardProps) => {
   // ------------- fetch priorities from data base ----------------------
   const [priorities, setPriorities] = useState([]);
+  const [error, setError] = useState("");
+  const { t } = useTranslation();
 
   const dispatch = useAppDispatch();
 
@@ -56,12 +60,13 @@ const NewTaskCard = ({ setShowTaskCard }: NewTaskCardProps) => {
       const res = await axios.get("http://localhost:8000/v1/priorities");
       setPriorities(res.data);
     } catch (error) {
-      console.log(error);
+      setError(t("error"));
     }
   };
 
   useEffect(() => {
     getPrioritiesEnum();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const renderPriorities = priorities ? (
@@ -97,7 +102,7 @@ const NewTaskCard = ({ setShowTaskCard }: NewTaskCardProps) => {
         dispatch(setTasks(res.data));
         setShowTaskCard(false);
       } catch (error) {
-        alert(error);
+        setError(t("error"));
       }
     },
   });
@@ -117,6 +122,15 @@ const NewTaskCard = ({ setShowTaskCard }: NewTaskCardProps) => {
         }}
       >
         <CardContent>
+          {error ? (
+            <Typography
+              sx={{ color: "red", fontSize: "1.2rem", marginBottom: "0.8rem" }}
+            >
+              hi
+            </Typography>
+          ) : (
+            ""
+          )}
           <form onSubmit={formik.handleSubmit}>
             <TextField
               sx={TextFieldStyles}

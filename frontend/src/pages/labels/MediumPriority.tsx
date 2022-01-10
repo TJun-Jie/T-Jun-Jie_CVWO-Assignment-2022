@@ -15,6 +15,7 @@ const MediumPriorityPage = () => {
   const dispatch = useAppDispatch();
 
   const [isLoaded, setIsLoaded] = useState(false);
+  const [error, setError] = useState("");
 
   const getData = async () => {
     try {
@@ -24,6 +25,8 @@ const MediumPriorityPage = () => {
       dispatch(setTasks(res.data));
       setIsLoaded(true);
     } catch (error) {
+      setError(t("error"));
+      setIsLoaded(false);
       console.log(error);
     }
   };
@@ -40,49 +43,57 @@ const MediumPriorityPage = () => {
   ) : (
     <div></div>
   );
-
-  return (
-    <BasicLayout>
-      {isLoaded ? (
-        <div>
-          <Box sx={{ height: "100px" }} />
+  if (error) {
+    return (
+      <BasicLayout>
+        <Box sx={{ height: "100px" }} />
+        <Typography sx={{ color: "red", fontSize: "2rem" }}>{error}</Typography>
+      </BasicLayout>
+    );
+  } else {
+    return (
+      <BasicLayout>
+        {isLoaded ? (
+          <div>
+            <Box sx={{ height: "100px" }} />
+            <Box
+              sx={{
+                width: "50%",
+                marginLeft: "auto",
+                marginRight: "auto",
+                textAlign: "start",
+              }}
+            >
+              <Box sx={{ ml: "26.5px", display: "flex" }}>
+                <CircleIcon sx={{ mt: "5px", mr: "5px" }} color="warning" />
+                <Typography
+                  sx={{ color: "secondary.light", ml: "5px", mr: "5px" }}
+                  variant="h5"
+                >
+                  {t("mediumPriority")}
+                </Typography>
+              </Box>
+              <Box>
+                <List>{renderTask}</List>
+              </Box>
+            </Box>
+          </div>
+        ) : (
           <Box
             sx={{
               width: "50%",
-              marginLeft: "auto",
-              marginRight: "auto",
-              textAlign: "start",
+              mx: "auto",
+              textAlign: "center",
             }}
           >
-            <Box sx={{ ml: "26.5px", display: "flex" }}>
-              <CircleIcon sx={{ mt: "5px", mr: "5px" }} color="warning" />
-              <Typography
-                sx={{ color: "secondary.light", ml: "5px", mr: "5px" }}
-                variant="h5"
-              >
-                {t("mediumPriority")}
-              </Typography>
-            </Box>
-            <Box>
-              <List>{renderTask}</List>
-            </Box>
-          </Box>
-        </div>
-      ) : (
-        <Box
-          sx={{
-            width: "50%",
-            mx: "auto",
-            textAlign: "center",
-          }}
-        >
-          <Box sx={{ height: "100px" }}></Box>
+            <Box sx={{ height: "100px" }}></Box>
 
-          <CircularProgress color="info" />
-        </Box>
-      )}
-    </BasicLayout>
-  );
+            <CircularProgress color="info" />
+          </Box>
+        )}
+      </BasicLayout>
+    );
+  }
 };
 
 export default MediumPriorityPage;

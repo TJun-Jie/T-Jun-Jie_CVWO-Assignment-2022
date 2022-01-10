@@ -17,13 +17,16 @@ const CompletedTaskPage = () => {
   const tasks = useAppSelector(selectTasks);
   const dispatch = useAppDispatch();
 
+  const [error, setError] = useState("");
+
   const getData = async () => {
     try {
       const res = await axios.get("http://localhost:8000/v1/tasks/completed");
       dispatch(setTasks(res.data));
       setIsLoaded(true);
     } catch (error) {
-      console.log(error);
+      setError(t("error"));
+      setIsLoaded(false);
     }
   };
 
@@ -38,50 +41,58 @@ const CompletedTaskPage = () => {
   ) : (
     <div></div>
   );
-
-  return (
-    <BasicLayout>
-      {isLoaded ? (
-        <div>
-          <Box sx={{ height: "100px" }} />
+  if (error) {
+    return (
+      <BasicLayout>
+        <Box sx={{ height: "100px" }} />
+        <Typography sx={{ color: "red", fontSize: "2rem" }}>{error}</Typography>
+      </BasicLayout>
+    );
+  } else {
+    return (
+      <BasicLayout>
+        {isLoaded ? (
+          <div>
+            <Box sx={{ height: "100px" }} />
+            <Box
+              sx={{
+                width: "50%",
+                marginLeft: "auto",
+                marginRight: "auto",
+                textAlign: "start",
+              }}
+            >
+              <Box sx={{ ml: "26.5px", display: "flex" }}>
+                <CelebrationIcon sx={{ color: "yellow" }} />
+                <Typography
+                  sx={{ color: "secondary.light", ml: "5px", mr: "5px" }}
+                  variant="h5"
+                >
+                  {t("completedTask")}
+                </Typography>
+                <CelebrationIcon sx={{ color: "yellow" }} />
+              </Box>
+              <Box>
+                <List>{renderTask}</List>
+              </Box>
+            </Box>
+          </div>
+        ) : (
           <Box
             sx={{
               width: "50%",
-              marginLeft: "auto",
-              marginRight: "auto",
-              textAlign: "start",
+              mx: "auto",
+              textAlign: "center",
             }}
           >
-            <Box sx={{ ml: "26.5px", display: "flex" }}>
-              <CelebrationIcon sx={{ color: "yellow" }} />
-              <Typography
-                sx={{ color: "secondary.light", ml: "5px", mr: "5px" }}
-                variant="h5"
-              >
-                {t("completedTask")}
-              </Typography>
-              <CelebrationIcon sx={{ color: "yellow" }} />
-            </Box>
-            <Box>
-              <List>{renderTask}</List>
-            </Box>
-          </Box>
-        </div>
-      ) : (
-        <Box
-          sx={{
-            width: "50%",
-            mx: "auto",
-            textAlign: "center",
-          }}
-        >
-          <Box sx={{ height: "100px" }}></Box>
+            <Box sx={{ height: "100px" }}></Box>
 
-          <CircularProgress color="info" />
-        </Box>
-      )}
-    </BasicLayout>
-  );
+            <CircularProgress color="info" />
+          </Box>
+        )}
+      </BasicLayout>
+    );
+  }
 };
 
 export default CompletedTaskPage;

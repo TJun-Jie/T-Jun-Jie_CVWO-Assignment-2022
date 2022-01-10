@@ -16,6 +16,7 @@ const HighPriorityPage = () => {
 
   const tasks = useAppSelector(selectTasks);
   const dispatch = useAppDispatch();
+  const [error, setError] = useState("");
 
   const getData = async () => {
     try {
@@ -25,7 +26,8 @@ const HighPriorityPage = () => {
       dispatch(setTasks(res.data));
       setIsLoaded(true);
     } catch (error) {
-      console.log(error);
+      setError(t("error"));
+      setIsLoaded(false);
     }
   };
 
@@ -42,48 +44,57 @@ const HighPriorityPage = () => {
     <div></div>
   );
 
-  return (
-    <BasicLayout>
-      {isLoaded ? (
-        <div>
-          <Box sx={{ height: "100px" }} />
+  if (error) {
+    return (
+      <BasicLayout>
+        <Box sx={{ height: "100px" }} />
+        <Typography sx={{ color: "red", fontSize: "2rem" }}>{error}</Typography>
+      </BasicLayout>
+    );
+  } else {
+    return (
+      <BasicLayout>
+        {isLoaded ? (
+          <div>
+            <Box sx={{ height: "100px" }} />
+            <Box
+              sx={{
+                width: "50%",
+                marginLeft: "auto",
+                marginRight: "auto",
+                textAlign: "start",
+              }}
+            >
+              <Box sx={{ ml: "26.5px", display: "flex" }}>
+                <CircleIcon sx={{ mt: "5px", mr: "5px" }} color="error" />
+                <Typography
+                  sx={{ color: "secondary.light", ml: "5px", mr: "5px" }}
+                  variant="h5"
+                >
+                  {t("highPriority")}
+                </Typography>
+              </Box>
+              <Box>
+                <List>{renderTask}</List>
+              </Box>
+            </Box>
+          </div>
+        ) : (
           <Box
             sx={{
               width: "50%",
-              marginLeft: "auto",
-              marginRight: "auto",
-              textAlign: "start",
+              mx: "auto",
+              textAlign: "center",
             }}
           >
-            <Box sx={{ ml: "26.5px", display: "flex" }}>
-              <CircleIcon sx={{ mt: "5px", mr: "5px" }} color="error" />
-              <Typography
-                sx={{ color: "secondary.light", ml: "5px", mr: "5px" }}
-                variant="h5"
-              >
-                {t("highPriority")}
-              </Typography>
-            </Box>
-            <Box>
-              <List>{renderTask}</List>
-            </Box>
-          </Box>
-        </div>
-      ) : (
-        <Box
-          sx={{
-            width: "50%",
-            mx: "auto",
-            textAlign: "center",
-          }}
-        >
-          <Box sx={{ height: "100px" }}></Box>
+            <Box sx={{ height: "100px" }}></Box>
 
-          <CircularProgress color="info" />
-        </Box>
-      )}
-    </BasicLayout>
-  );
+            <CircularProgress color="info" />
+          </Box>
+        )}
+      </BasicLayout>
+    );
+  }
 };
 
 export default HighPriorityPage;

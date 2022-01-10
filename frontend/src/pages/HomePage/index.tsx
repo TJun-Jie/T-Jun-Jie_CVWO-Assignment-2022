@@ -20,6 +20,7 @@ const HomePage = () => {
   const [showTaskCard, setShowTaskCard] = useState(false);
 
   const [isLoaded, setIsLoaded] = useState(false);
+  const [error, setError] = useState("");
 
   const getData = async () => {
     try {
@@ -27,7 +28,8 @@ const HomePage = () => {
       dispatch(setTasks(res.data));
       setIsLoaded(true);
     } catch (error) {
-      console.log(error);
+      setError(t("error"));
+      setIsLoaded(false);
     }
   };
 
@@ -42,59 +44,69 @@ const HomePage = () => {
   ) : (
     <div></div>
   );
+  if (error) {
+    return (
+      <BasicLayout>
+        <Box sx={{ height: "100px" }} />
+        <Typography sx={{ color: "red", fontSize: "2rem" }}>{error}</Typography>
+      </BasicLayout>
+    );
+  } else {
+    return (
+      <BasicLayout>
+        {isLoaded ? (
+          <div>
+            <Box sx={{ height: "100px" }} />
+            <Box
+              sx={{
+                width: "50%",
+                marginLeft: "auto",
+                marginRight: "auto",
+                textAlign: "start",
+              }}
+            >
+              <Typography
+                sx={{ ml: "26.5px", color: "secondary.light" }}
+                variant="h5"
+              >
+                {t("currentTask")}
+              </Typography>
+              <Box>
+                <List>{renderTask}</List>
+              </Box>
+              {!showTaskCard && (
+                <Button
+                  className={styles.button}
+                  color="secondary"
+                  variant="contained"
+                  onClick={() => setShowTaskCard(true)}
+                  sx={{ ml: "26.5px" }}
+                >
+                  Add Task
+                </Button>
+              )}
 
-  return (
-    <BasicLayout>
-      {isLoaded ? (
-        <div>
-          <Box sx={{ height: "100px" }} />
+              {showTaskCard && (
+                <NewTaskCard setShowTaskCard={setShowTaskCard} />
+              )}
+            </Box>
+          </div>
+        ) : (
           <Box
             sx={{
               width: "50%",
-              marginLeft: "auto",
-              marginRight: "auto",
-              textAlign: "start",
+              mx: "auto",
+              textAlign: "center",
             }}
           >
-            <Typography
-              sx={{ ml: "26.5px", color: "secondary.light" }}
-              variant="h5"
-            >
-              {t("currentTask")}
-            </Typography>
-            <Box>
-              <List>{renderTask}</List>
-            </Box>
-            {!showTaskCard && (
-              <Button
-                className={styles.button}
-                color="secondary"
-                variant="contained"
-                onClick={() => setShowTaskCard(true)}
-                sx={{ ml: "26.5px" }}
-              >
-                Add Task
-              </Button>
-            )}
+            <Box sx={{ height: "100px" }}></Box>
 
-            {showTaskCard && <NewTaskCard setShowTaskCard={setShowTaskCard} />}
+            <CircularProgress color="info" />
           </Box>
-        </div>
-      ) : (
-        <Box
-          sx={{
-            width: "50%",
-            mx: "auto",
-            textAlign: "center",
-          }}
-        >
-          <Box sx={{ height: "100px" }}></Box>
-
-          <CircularProgress color="info" />
-        </Box>
-      )}
-    </BasicLayout>
-  );
+        )}
+      </BasicLayout>
+    );
+  }
 };
 
 export default HomePage;

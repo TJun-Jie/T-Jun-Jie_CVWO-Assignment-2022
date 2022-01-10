@@ -9,5 +9,7 @@
   "highPriority": "High Priority",
   "confirmChanges": "Confirm Changes",
   "deleteTask": "Delete Task",
-  "cancel": "Cancel"
+  "cancel": "Cancel",
+  "notFound": "Page not found",
+  "error": "Sorry, an error has occured"
 }
