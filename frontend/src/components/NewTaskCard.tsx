@@ -14,6 +14,8 @@ import axios from "axios";
 import { useFormik } from "formik";
 import { useEffect, useState } from "react";
 import * as yup from "yup";
+import { useAppDispatch } from "../redux/hooks";
+import { setTasks } from "../redux/slices/taskSlice";
 import { Priority } from "../shared/types/priority";
 
 const validationSchema = yup.object({
@@ -41,12 +43,13 @@ export const SelectFieldStyles = {
 
 type NewTaskCardProps = {
   setShowTaskCard: (state: boolean) => void;
-  setData: (state: []) => void;
 };
 
-const NewTaskCard = ({ setShowTaskCard, setData }: NewTaskCardProps) => {
+const NewTaskCard = ({ setShowTaskCard }: NewTaskCardProps) => {
   // ------------- fetch priorities from data base ----------------------
   const [priorities, setPriorities] = useState([]);
+
+  const dispatch = useAppDispatch();
 
   const getPrioritiesEnum = async () => {
     try {
@@ -91,7 +94,7 @@ const NewTaskCard = ({ setShowTaskCard, setData }: NewTaskCardProps) => {
 
         // refetch data
         const res = await axios.get("http://localhost:8000/v1/tasks");
-        setData(res.data);
+        dispatch(setTasks(res.data));
         setShowTaskCard(false);
       } catch (error) {
         alert(error);

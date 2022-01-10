@@ -7,17 +7,20 @@ import "@fontsource/roboto/300.css";
 import "@fontsource/roboto/400.css";
 import "@fontsource/roboto/500.css";
 import "@fontsource/roboto/700.css";
-import './i18n';
-import {BrowserRouter} from "react-router-dom";
+import "./i18n";
+import { BrowserRouter } from "react-router-dom";
+import { Provider } from "react-redux";
+import store from "./redux/store";
 
 ReactDOM.render(
+  <Provider store={store}>
     <BrowserRouter>
-        <React.StrictMode>
-            <App/>
-        </React.StrictMode>
+      <React.StrictMode>
+        <App />
+      </React.StrictMode>
     </BrowserRouter>
-    ,
-    document.getElementById("root")
+  </Provider>,
+  document.getElementById("root")
 );
 
 // If you want to start measuring performance in your app, pass a function

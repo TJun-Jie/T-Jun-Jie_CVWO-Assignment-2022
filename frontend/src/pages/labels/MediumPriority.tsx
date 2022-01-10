@@ -6,11 +6,14 @@ import SingleTask from "../../components/SingleTask";
 import { useEffect, useState } from "react";
 import CircleIcon from "@mui/icons-material/Circle";
 import axios from "axios";
+import { useAppDispatch, useAppSelector } from "../../redux/hooks";
+import { selectTasks, setTasks } from "../../redux/slices/taskSlice";
 
 const MediumPriorityPage = () => {
   const { t } = useTranslation();
+  const tasks = useAppSelector(selectTasks);
+  const dispatch = useAppDispatch();
 
-  const [data, setData] = useState([]);
   const [isLoaded, setIsLoaded] = useState(false);
 
   const getData = async () => {
@@ -18,7 +21,7 @@ const MediumPriorityPage = () => {
       const res = await axios.get(
         "http://localhost:8000/v1/tasks/priorities/2"
       );
-      setData(res.data);
+      dispatch(setTasks(res.data));
       setIsLoaded(true);
     } catch (error) {
       console.log(error);
@@ -27,15 +30,13 @@ const MediumPriorityPage = () => {
 
   useEffect(() => {
     getData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const renderTask = data ? (
-    data.map(
-      function (item: Task, i) {
-        return <SingleTask key={item._id} task={item} setData={setData} />;
-      },
-      [data]
-    )
+  const renderTask = tasks ? (
+    tasks.map(function (item: Task, i) {
+      return <SingleTask key={item._id} task={item} />;
+    })
   ) : (
     <div></div>
   );

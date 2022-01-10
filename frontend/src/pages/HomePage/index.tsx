@@ -7,20 +7,24 @@ import SingleTask from "../../components/SingleTask";
 import useBasicStyles from "../../layouts/useBasicStyles";
 import axios from "axios";
 import { Task } from "../../shared/types/task";
+import { useAppDispatch, useAppSelector } from "../../redux/hooks";
+import { selectTasks, setTasks } from "../../redux/slices/taskSlice";
 
 const HomePage = () => {
   const { t } = useTranslation();
   const styles = useBasicStyles();
 
+  const tasks = useAppSelector(selectTasks);
+  const dispatch = useAppDispatch();
+
   const [showTaskCard, setShowTaskCard] = useState(false);
 
-  const [data, setData] = useState([]);
   const [isLoaded, setIsLoaded] = useState(false);
 
   const getData = async () => {
     try {
       const res = await axios.get("http://localhost:8000/v1/tasks");
-      setData(res.data);
+      dispatch(setTasks(res.data));
       setIsLoaded(true);
     } catch (error) {
       console.log(error);
@@ -28,16 +32,13 @@ const HomePage = () => {
   };
 
   useEffect(() => {
-    getData();
+    getData(); // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const renderTask = data ? (
-    data.map(
-      function (item: Task, i) {
-        return <SingleTask key={item._id} task={item} setData={setData} />;
-      },
-      [data]
-    )
+  const renderTask = tasks ? (
+    tasks.map(function (item: Task, i) {
+      return <SingleTask key={item._id} task={item} />;
+    })
   ) : (
     <div></div>
   );
@@ -76,12 +77,7 @@ const HomePage = () => {
               </Button>
             )}
 
-            {showTaskCard && (
-              <NewTaskCard
-                setShowTaskCard={setShowTaskCard}
-                setData={setData}
-              />
-            )}
+            {showTaskCard && <NewTaskCard setShowTaskCard={setShowTaskCard} />}
           </Box>
         </div>
       ) : (

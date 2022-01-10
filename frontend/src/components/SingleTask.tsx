@@ -25,6 +25,8 @@ import { useFormik } from "formik";
 import { useTranslation } from "react-i18next";
 import * as yup from "yup";
 import { useLocation } from "react-router-dom";
+import { useAppDispatch } from "../redux/hooks";
+import { setTasks } from "../redux/slices/taskSlice";
 
 const validationSchema = yup.object({
   title: yup.string().required("Please enter a title"),
@@ -34,11 +36,11 @@ const validationSchema = yup.object({
 
 type SingleTaskProps = {
   task: Task;
-  setData: (state: []) => void;
 };
 
-const SingleTask = ({ task, setData }: SingleTaskProps) => {
+const SingleTask = ({ task }: SingleTaskProps) => {
   const { t } = useTranslation();
+  const dispatch = useAppDispatch();
 
   const location = useLocation();
   console.log(location);
@@ -87,7 +89,7 @@ const SingleTask = ({ task, setData }: SingleTaskProps) => {
         }`
       );
 
-      setData(res.data);
+      dispatch(setTasks(res.data));
       setOpen(false);
     } catch (error) {
       console.log(error);
@@ -120,7 +122,7 @@ const SingleTask = ({ task, setData }: SingleTaskProps) => {
             location.pathname !== "/" ? location.pathname : ""
           }`
         );
-        setData(res.data);
+        dispatch(setTasks(res.data));
         setOpen(false);
       } catch (error) {
         alert(error);
