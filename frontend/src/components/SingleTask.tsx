@@ -37,9 +37,10 @@ const validationSchema = yup.object({
 
 type SingleTaskProps = {
   task: Task;
+  forHeader: boolean;
 };
 
-const SingleTask = ({ task }: SingleTaskProps) => {
+const SingleTask = ({ task, forHeader }: SingleTaskProps) => {
   const { t } = useTranslation();
   const dispatch = useAppDispatch();
 
@@ -248,11 +249,15 @@ const SingleTask = ({ task }: SingleTaskProps) => {
           </Button>
         </DialogActions>
       </Dialog>
-      <Divider
-        sx={{ backgroundColor: "secondary.light" }}
-        variant="inset"
-        component="li"
-      />
+      {!forHeader ? (
+        <Divider
+          sx={{ backgroundColor: "secondary.light" }}
+          variant="inset"
+          component="li"
+        />
+      ) : (
+        <Divider sx={{ backgroundColor: "secondary.light" }} />
+      )}
     </>
   );
 };

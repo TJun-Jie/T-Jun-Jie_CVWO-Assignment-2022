@@ -38,7 +38,7 @@ const HighPriorityPage = () => {
 
   const renderTask = tasks ? (
     tasks.map(function (item: Task, i) {
-      return <SingleTask key={item._id} task={item} />;
+      return <SingleTask key={item._id} task={item} forHeader={false} />;
     })
   ) : (
     <div></div>
