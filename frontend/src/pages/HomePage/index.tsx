@@ -13,7 +13,6 @@ import { selectTasks, setTasks } from "../../redux/slices/taskSlice";
 const HomePage = () => {
   const { t } = useTranslation();
   const styles = useBasicStyles();
-
   const tasks = useAppSelector(selectTasks);
   const dispatch = useAppDispatch();
 
@@ -21,10 +20,9 @@ const HomePage = () => {
 
   const [isLoaded, setIsLoaded] = useState(false);
   const [error, setError] = useState("");
-
   const getData = async () => {
     try {
-      const res = await axios.get("http://localhost:8000/v1/tasks");
+      const res = await axios.get(`${process.env.REACT_APP_API_END_POINT}/v1/tasks`);
       dispatch(setTasks(res.data));
       setIsLoaded(true);
     } catch (error) {

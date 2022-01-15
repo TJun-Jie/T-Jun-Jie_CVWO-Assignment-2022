@@ -11,7 +11,7 @@ COPY . .
 # Expose port
 EXPOSE 3000
 # Start the app
-CMD [ "yarn", "start" ]
+CMD [ "yarn", "start:dev" ]
 
 FROM node:14-alpine AS builder
 ENV NODE_ENV production
@@ -24,7 +24,7 @@ RUN yarn install --production
 # Copy app files
 COPY . .
 # Build the app
-RUN yarn build
+RUN yarn build:prod
 
 # Bundle static assets with nginx
 FROM nginx:1.21.0-alpine as production

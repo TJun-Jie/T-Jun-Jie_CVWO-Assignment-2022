@@ -57,7 +57,7 @@ const NewTaskCard = ({ setShowTaskCard }: NewTaskCardProps) => {
 
   const getPrioritiesEnum = async () => {
     try {
-      const res = await axios.get("http://localhost:8000/v1/priorities");
+      const res = await axios.get(`${process.env.REACT_APP_API_END_POINT}/v1/priorities`);
       setPriorities(res.data);
     } catch (error) {
       setError(t("error"));
@@ -92,13 +92,13 @@ const NewTaskCard = ({ setShowTaskCard }: NewTaskCardProps) => {
     validationSchema: validationSchema,
     onSubmit: async (values) => {
       try {
-        await axios.post("http://localhost:8000/v1/tasks", {
+        await axios.post(`${process.env.REACT_APP_API_END_POINT}/v1/tasks`, {
           completed: false,
           ...values,
         });
 
         // refetch data
-        const res = await axios.get("http://localhost:8000/v1/tasks");
+        const res = await axios.get(`${process.env.REACT_APP_API_END_POINT}/v1/tasks`);
         dispatch(setTasks(res.data));
         setShowTaskCard(false);
       } catch (error) {

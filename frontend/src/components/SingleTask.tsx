@@ -56,7 +56,7 @@ const SingleTask = ({ task, forHeader }: SingleTaskProps) => {
 
   const getPrioritiesEnum = async () => {
     try {
-      const res = await axios.get("http://localhost:8000/v1/priorities");
+      const res = await axios.get(`${process.env.REACT_APP_API_END_POINT}/v1/priorities`);
       setPriorities(res.data);
     } catch (error) {
       console.log(error);
@@ -83,10 +83,10 @@ const SingleTask = ({ task, forHeader }: SingleTaskProps) => {
 
   const handleDelete = async () => {
     try {
-      await axios.delete(`http://localhost:8000/v1/tasks/${id}`);
+      await axios.delete(`${process.env.REACT_APP_API_END_POINT}/v1/tasks/${id}`);
 
       const res = await axios.get(
-        `http://localhost:8000/v1/tasks${
+        `${process.env.REACT_APP_API_END_POINT}/v1/tasks${
           location.pathname !== "/" ? location.pathname : ""
         }`
       );
@@ -116,11 +116,11 @@ const SingleTask = ({ task, forHeader }: SingleTaskProps) => {
     validationSchema: validationSchema,
     onSubmit: async (values) => {
       try {
-        await axios.put(`http://localhost:8000/v1/tasks/${id}`, {
+        await axios.put(`${process.env.REACT_APP_API_END_POINT}/v1/tasks/${id}`, {
           ...values,
         });
         const res = await axios.get(
-          `http://localhost:8000/v1/tasks${
+          `${process.env.REACT_APP_API_END_POINT}/v1/tasks${
             location.pathname !== "/" ? location.pathname : ""
           }`
         );

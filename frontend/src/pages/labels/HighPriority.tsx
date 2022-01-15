@@ -21,7 +21,7 @@ const HighPriorityPage = () => {
   const getData = async () => {
     try {
       const res = await axios.get(
-        "http://localhost:8000/v1/tasks/priorities/3"
+        `${process.env.REACT_APP_API_END_POINT}/v1/tasks/priorities/3`
       );
       dispatch(setTasks(res.data));
       setIsLoaded(true);

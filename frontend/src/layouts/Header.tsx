@@ -35,10 +35,8 @@ const Header = () => {
   const { t } = useTranslation();
 
   const [searchQuery, setSearchQuery] = useState("");
-
   const tasks = useAppSelector(selectTasks);
-
-  const filteredTasks = tasks.filter((task) => {
+  const filteredTasks = tasks?.filter((task) => {
     if (searchQuery !== "") {
       return task.title.startsWith(searchQuery);
     }
@@ -52,6 +50,7 @@ const Header = () => {
   ) : (
     <div></div>
   );
+
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -94,7 +93,7 @@ const Header = () => {
                 onChange={(e) => handleChange(e)}
               />
             </Box>
-            {filteredTasks.length !== 0 ? (
+            {filteredTasks?.length !== 0 && filteredTasks? (
               <Box
                 sx={{
                   position: "absolute",
