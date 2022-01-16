@@ -17,3 +17,11 @@ Create a .env file in /backend/cmd/api (on the same level as main.go)
 In the env file, add MONGO_DB_URI = "mongodb+srv://jjtai:\<password\>@cvwo-to-do.9wfav.mongodb.net/myFirstDatabase?retryWrites=true&w=majority" (your connection string)
 
 In /backend/cmd/api, run the command "go run ./" in the command prompt. If everything works correctly, you should see the message "Connected to MongoDB!" in the command prompt
+
+
+
+// How to get started
+1. cd to frontend folder and run "npm install"
+2. set up database (instructions above)
+3. run "docker-compose up" in root directory
+4. access application on folder via localhost:3000
