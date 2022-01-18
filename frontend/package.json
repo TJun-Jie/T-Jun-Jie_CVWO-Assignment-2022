@@ -39,13 +39,13 @@
   },
   "scripts": {
     "start": "react-scripts start",
-    "build": "react-scripts build",
+    "build": "react-scripts --openssl-legacy-provider build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "start:dev": "env-cmd -f ./environments/.dev.env react-scripts start",
     "build:dev": "env-cmd -f ./environments/.dev.env react-scripts build",
     "start:prod": "env-cmd -f ./environments/.prod.env react-scripts start",
-    "build:prod": "env-cmd -f ./environments/.prod.env react-scripts build"
+    "build:prod": "env-cmd -f ./environments/.prod.env react-scripts --openssl-legacy-provider build"
   },
   "eslintConfig": {
     "extends": [
