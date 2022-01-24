@@ -1,0 +1,14 @@
+[Unit]
+
+[Install]
+WantedBy=multi-user.target
+
+[Service]
+ExecStart=/home/ubuntu/T-Jun-Jie_CVWO-Assignment-2022/backend/cvwo-backend
+WorkingDirectory=/home/ubuntu/T-Jun-Jie_CVWO-Assignment-2022/backend
+User=root
+Restart=always
+RestartSec=5
+StandardOutput=syslog
+StandardError=syslog
+SyslogIdentifier=%n
