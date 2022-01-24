@@ -9,8 +9,11 @@ import axios from "axios";
 import { Task } from "../../shared/types/task";
 import { useAppDispatch, useAppSelector } from "../../redux/hooks";
 import { selectTasks, setTasks } from "../../redux/slices/taskSlice";
+import {useAuth0} from "../../react-auth0-spa";
 
 const HomePage = () => {
+  const { isAuthenticated, loginWithRedirect, logout } = useAuth0();
+
   const { t } = useTranslation();
   const styles = useBasicStyles();
   const tasks = useAppSelector(selectTasks);
@@ -101,6 +104,9 @@ const HomePage = () => {
 
             <CircularProgress color="info" />
           </Box>
+        )}
+        {!isAuthenticated && (
+            <button className="btn btn-primary btn-lg btn-login btn-block" onClick={() => loginWithRedirect({})}>Sign in</button>
         )}
       </BasicLayout>
     );

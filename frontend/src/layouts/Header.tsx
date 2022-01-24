@@ -116,8 +116,9 @@ const Header = () => {
             component="div"
             sx={{
               flexGrow: 1,
+              position: "absolute",
+              left:"47%",
               textAlign: "center",
-              paddingRight: "48px",
               "& a": { color: "secondary.light", textDecoration: "none" },
             }}
           >
