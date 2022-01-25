@@ -8,6 +8,8 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import { useAppDispatch, useAppSelector } from "../../redux/hooks";
 import { selectTasks, setTasks } from "../../redux/slices/taskSlice";
+import {withAuthenticationRequired} from "@auth0/auth0-react";
+import Login from "../Login";
 
 const CompletedTaskPage = () => {
   const { t } = useTranslation();
@@ -95,4 +97,6 @@ const CompletedTaskPage = () => {
   }
 };
 
-export default CompletedTaskPage;
+export default withAuthenticationRequired(CompletedTaskPage, {
+  onRedirecting: () => <Login/>,
+});

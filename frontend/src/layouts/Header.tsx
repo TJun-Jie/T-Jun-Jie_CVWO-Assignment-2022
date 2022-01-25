@@ -1,6 +1,6 @@
 import {
   AppBar,
-  Box,
+  Box, Button,
   IconButton,
   TextField,
   Toolbar,
@@ -16,6 +16,7 @@ import { useAppSelector } from "../redux/hooks";
 import SingleTask from "../components/SingleTask";
 import { selectTasks } from "../redux/slices/taskSlice";
 import { Task } from "../shared/types/task";
+import {useAuth0} from "@auth0/auth0-react";
 
 const searchStyles = {
   backgroundColor: "primary.dark",
@@ -33,6 +34,12 @@ const searchStyles = {
 const Header = () => {
   const [drawer, setDrawer] = useState(false);
   const { t } = useTranslation();
+
+  const {
+    isAuthenticated,
+    loginWithRedirect,
+    logout,
+  } = useAuth0();
 
   const [searchQuery, setSearchQuery] = useState("");
   const tasks = useAppSelector(selectTasks);
@@ -124,6 +131,12 @@ const Header = () => {
           >
             <Link to="/">{t("appName")}</Link>
           </Typography>
+          <Box sx={{marginLeft: 'auto'}}>
+            {!isAuthenticated ?
+                <Button onClick={loginWithRedirect} variant="outlined">Sign in</Button> :
+                <Button onClick={() => logout({returnTo: window.location.origin})} variant="outlined">Sign out</Button>
+            }
+          </Box>
         </Toolbar>
       </AppBar>
       <CustomDrawer drawer={drawer} setDrawer={setDrawer}></CustomDrawer>

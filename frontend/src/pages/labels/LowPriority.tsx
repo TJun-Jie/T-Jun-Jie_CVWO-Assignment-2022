@@ -8,6 +8,8 @@ import CircleIcon from "@mui/icons-material/Circle";
 import axios from "axios";
 import { useAppDispatch, useAppSelector } from "../../redux/hooks";
 import { selectTasks, setTasks } from "../../redux/slices/taskSlice";
+import {withAuthenticationRequired} from "@auth0/auth0-react";
+import Login from "../Login";
 
 const LowPriorityPage = () => {
   const { t } = useTranslation();
@@ -97,4 +99,6 @@ const LowPriorityPage = () => {
   }
 };
 
-export default LowPriorityPage;
+export default withAuthenticationRequired(LowPriorityPage, {
+  onRedirecting: () => <Login/>,
+});

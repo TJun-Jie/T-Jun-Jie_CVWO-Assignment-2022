@@ -1,4 +1,5 @@
 {
   "domain": "dev-rxxw5zlr.us.auth0.com",
-  "clientId": "HLbCundNdDY9t8jpsrnPpqQtq4rcLB0D"
+  "clientId": "HLbCundNdDY9t8jpsrnPpqQtq4rcLB0D",
+  "audience": "https://tjunjie-cvwo-api/"
 }

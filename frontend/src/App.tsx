@@ -4,25 +4,23 @@ import theme from "./layouts/basicTheme";
 import MainRouter from "./MainRouter";
 import {ThemeProvider} from "@mui/material/styles";
 import history from "./history";
-import {Auth0Provider} from "./react-auth0-spa";
+import { Auth0Provider } from '@auth0/auth0-react';
 import config from "./auth_config.json";
 
 // @ts-ignore
-const onRedirectCallback = appState => {
-    history.push(
-        appState && appState.targetUrl
-            ? appState.targetUrl
-            : window.location.pathname
-    );
-}
+const onRedirectCallback = (appState) => {
+    // Use the router's history module to replace the url
+    history.replace(appState?.returnTo || window.location.pathname);
+};
 
 function App() {
     return (
         <Auth0Provider
             domain={config.domain}
-            client_id={config.clientId}
-            redirect_uri={window.location.origin}
-            // onRedirectCallback={onRedirectCallback}
+            clientId={config.clientId}
+            redirectUri={window.location.origin}
+            audience={config.audience}
+            onRedirectCallback={onRedirectCallback}
         >
             <ThemeProvider theme={theme}>
                 <MainRouter/>

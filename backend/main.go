@@ -3,9 +3,11 @@ package main
 import (
 	"context"
 	"cvwo-backend/cmd/api/helper"
+	"cvwo-backend/cmd/api/middleware"
 	"cvwo-backend/cmd/api/models"
 	"encoding/json"
 	"github.com/gorilla/mux"
+	"github.com/rs/cors"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"log"
@@ -18,26 +20,35 @@ var tasksCollection = client.Database("cvwo_rest_api").Collection("tasks")
 var priorityCollection = client.Database("cvwo_rest_api").Collection("priorities")
 
 func main() {
+
 	r := mux.NewRouter()
 
 	// arrange our route
 	r.HandleFunc("/v1/priorities", getPriorities).Methods("GET")
 	r.HandleFunc("/v1/priority/{id}", getPriority).Methods("GET")
-	r.HandleFunc("/v1/tasks", getTasks).Methods("GET")
-	r.HandleFunc("/v1/tasks/completed", getCompletedTasks).Methods("GET")
-	r.HandleFunc("/v1/tasks/priorities/{priorityID}", getTaskByPriority).Methods("GET")
-	r.HandleFunc("/v1/tasks/{id}", getTask).Methods("GET")
-	r.HandleFunc("/v1/tasks", createTask).Methods("POST", "OPTIONS")
-	r.HandleFunc("/v1/tasks/{id}", updateTask).Methods("PUT", "OPTIONS")
-	r.HandleFunc("/v1/tasks/{id}", deleteTask).Methods("DELETE", "OPTIONS")
+	r.Handle("/v1/tasks", middleware.EnsureValidToken()(http.HandlerFunc(getTasks))).Methods("GET", "OPTIONS")
+	r.Handle("/v1/tasks/completed", middleware.EnsureValidToken()(http.HandlerFunc(getCompletedTasks))).Methods("GET")
+	r.Handle("/v1/tasks/priorities/{priorityID}", middleware.EnsureValidToken()(http.HandlerFunc(getTaskByPriority))).Methods("GET")
+	r.Handle("/v1/tasks/{id}", middleware.EnsureValidToken()(http.HandlerFunc(getTask))).Methods("GET")
+	r.Handle("/v1/tasks", middleware.EnsureValidToken()(http.HandlerFunc(createTask))).Methods("POST", "OPTIONS")
+	r.Handle("/v1/tasks/{id}", middleware.EnsureValidToken()(http.HandlerFunc(updateTask))).Methods("PUT", "OPTIONS")
+	r.Handle("/v1/tasks/{id}", middleware.EnsureValidToken()(http.HandlerFunc(deleteTask))).Methods("DELETE", "OPTIONS")
+
 	// set our port address
-	log.Fatal(http.ListenAndServe(":8000", r))
+
+	corsWrapper := cors.New(cors.Options{
+		AllowedMethods: []string{"GET", "POST"},
+		AllowedHeaders: []string{"Content-Type", "Origin", "Accept", "*"},
+	})
+
+	log.Fatal(http.ListenAndServe(":8000", corsWrapper.Handler(r)))
 }
 
 func enableCors(w *http.ResponseWriter) {
+	(*w).Header().Set("Access-Control-Allow-Credentials", "true")
 	(*w).Header().Set("Access-Control-Allow-Origin", "*")
-	(*w).Header().Set("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE")
-	(*w).Header().Set("Access-Control-Allow-Headers", "Accept, Content-Type, Content-Length, Accept-Encoding, X-CSRF-Token, Authorization")
+	(*w).Header().Set("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE, HEAD")
+	(*w).Header().Set("Access-Control-Allow-Headers", "Accept, Content-Type, Content-Length, Accept-Encoding, X-CSRF-Token, Authorization, Origin,")
 }
 
 func getPriorities(w http.ResponseWriter, r *http.Request) {
@@ -136,7 +147,8 @@ func getTasks(w http.ResponseWriter, r *http.Request) {
 		log.Fatal(err)
 	}
 
-	json.NewEncoder(w).Encode(task) // encode similar to serialize process.
+	json.NewEncoder(w).Encode(task)
+	// encode similar to serialize process.
 }
 
 func getCompletedTasks(w http.ResponseWriter, r *http.Request) {
