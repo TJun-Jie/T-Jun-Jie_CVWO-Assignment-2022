@@ -1,113 +1,113 @@
 import BasicLayout from "../../layouts";
-import { Box, CircularProgress, List, Typography } from "@mui/material";
-import { useTranslation } from "react-i18next";
+import {Box, CircularProgress, List, Typography} from "@mui/material";
+import {useTranslation} from "react-i18next";
 import CelebrationIcon from "@mui/icons-material/Celebration";
-import { Task } from "../../shared/types/task";
+import {Task} from "../../shared/types/task";
 import SingleTask from "../../components/SingleTask";
-import { useEffect, useState } from "react";
+import {useEffect, useState} from "react";
 import axios from "axios";
-import { useAppDispatch, useAppSelector } from "../../redux/hooks";
-import { selectTasks, setTasks } from "../../redux/slices/taskSlice";
+import {useAppDispatch, useAppSelector} from "../../redux/hooks";
+import {selectTasks, setTasks} from "../../redux/slices/taskSlice";
 import {withAuthenticationRequired} from "@auth0/auth0-react";
 import Login from "../Loading";
 import {selectLoading, selectToken} from "../../redux/slices/authSlice";
 
 const CompletedTaskPage = () => {
-  const { t } = useTranslation();
+    const {t} = useTranslation();
 
-  const [isLoaded, setIsLoaded] = useState(false);
+    const [isLoaded, setIsLoaded] = useState(false);
 
-  const tasks = useAppSelector(selectTasks);
-  const dispatch = useAppDispatch();
+    const tasks = useAppSelector(selectTasks);
+    const dispatch = useAppDispatch();
 
-  const [error, setError] = useState("");
+    const [error, setError] = useState("");
 
-  const token = useAppSelector(selectToken);
+    const token = useAppSelector(selectToken);
 
-  const isLoading = useAppSelector(selectLoading);
+    const isLoading = useAppSelector(selectLoading);
 
-  const getData = async () => {
-    try {
-      const res = await axios.get(`${process.env.REACT_APP_API_END_POINT}/v1/tasks/completed`, {
-        headers: {
-          Authorization: `Bearer ${token}`
+    const getData = async () => {
+        try {
+            const res = await axios.get(`${process.env.REACT_APP_API_END_POINT}/v1/tasks/completed`, {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            });
+            dispatch(setTasks(res.data));
+            setIsLoaded(true);
+        } catch (error) {
+            setError(t("error"));
+            setIsLoaded(false);
         }
-      });
-      dispatch(setTasks(res.data));
-      setIsLoaded(true);
-    } catch (error) {
-      setError(t("error"));
-      setIsLoaded(false);
-    }
-  };
+    };
 
-  useEffect(() => {
-    if(!isLoading){
-      getData(); // eslint-disable-next-line react-hooks/exhaustive-deps
-    }
-  }, [isLoading]);
+    useEffect(() => {
+        if (!isLoading) {
+            getData(); // eslint-disable-next-line react-hooks/exhaustive-deps
+        }
+    }, [isLoading]);
 
-  const renderTask = tasks ? (
-    tasks.map(function (item: Task, i) {
-      return <SingleTask key={item._id} task={item} forHeader={false} />;
-    })
-  ) : (
-    <div></div>
-  );
-  if (error) {
-    return (
-      <BasicLayout>
-        <Box sx={{ height: "100px" }} />
-        <Typography sx={{ color: "red", fontSize: "2rem" }}>{error}</Typography>
-      </BasicLayout>
+    const renderTask = tasks ? (
+        tasks.map(function (item: Task, i) {
+            return <SingleTask key={item._id} task={item} forHeader={false}/>;
+        })
+    ) : (
+        <div></div>
     );
-  } else {
-    return (
-      <BasicLayout>
-        {isLoaded  && !isLoading  ? (
-          <div>
-            <Box sx={{ height: "100px" }} />
-            <Box
-              sx={{
-                width: "50%",
-                marginLeft: "auto",
-                marginRight: "auto",
-                textAlign: "start",
-              }}
-            >
-              <Box sx={{ ml: "26.5px", display: "flex" }}>
-                <CelebrationIcon sx={{ color: "yellow" }} />
-                <Typography
-                  sx={{ color: "secondary.light", ml: "5px", mr: "5px" }}
-                  variant="h5"
-                >
-                  {t("completedTask")}
-                </Typography>
-                <CelebrationIcon sx={{ color: "yellow" }} />
-              </Box>
-              <Box>
-                <List>{renderTask}</List>
-              </Box>
-            </Box>
-          </div>
-        ) : (
-          <Box
-            sx={{
-              width: "50%",
-              mx: "auto",
-              textAlign: "center",
-            }}
-          >
-            <Box sx={{ height: "100px" }}></Box>
+    if (error) {
+        return (
+            <BasicLayout>
+                <Box sx={{height: "100px"}}/>
+                <Typography sx={{color: "red", fontSize: "2rem"}}>{error}</Typography>
+            </BasicLayout>
+        );
+    } else {
+        return (
+            <BasicLayout>
+                {isLoaded && !isLoading ? (
+                    <div>
+                        <Box sx={{height: "100px"}}/>
+                        <Box
+                            sx={{
+                                width: "50%",
+                                marginLeft: "auto",
+                                marginRight: "auto",
+                                textAlign: "start",
+                            }}
+                        >
+                            <Box sx={{ml: "26.5px", display: "flex"}}>
+                                <CelebrationIcon sx={{color: "yellow"}}/>
+                                <Typography
+                                    sx={{color: "secondary.light", ml: "5px", mr: "5px"}}
+                                    variant="h5"
+                                >
+                                    {t("completedTask")}
+                                </Typography>
+                                <CelebrationIcon sx={{color: "yellow"}}/>
+                            </Box>
+                            <Box>
+                                <List>{renderTask}</List>
+                            </Box>
+                        </Box>
+                    </div>
+                ) : (
+                    <Box
+                        sx={{
+                            width: "50%",
+                            mx: "auto",
+                            textAlign: "center",
+                        }}
+                    >
+                        <Box sx={{height: "100px"}}></Box>
 
-            <CircularProgress color="info" />
-          </Box>
-        )}
-      </BasicLayout>
-    );
-  }
+                        <CircularProgress color="info"/>
+                    </Box>
+                )}
+            </BasicLayout>
+        );
+    }
 };
 
 export default withAuthenticationRequired(CompletedTaskPage, {
-  onRedirecting: () => <Login/>,
+    onRedirecting: () => <Login/>,
 });

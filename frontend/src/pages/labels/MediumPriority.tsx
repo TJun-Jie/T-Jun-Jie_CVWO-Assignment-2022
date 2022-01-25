@@ -65,7 +65,7 @@ const MediumPriorityPage = () => {
     } else {
         return (
             <BasicLayout>
-                {isLoaded && !isLoading  ? (
+                {isLoaded && !isLoading ? (
                     <div>
                         <Box sx={{height: "100px"}}/>
                         <Box

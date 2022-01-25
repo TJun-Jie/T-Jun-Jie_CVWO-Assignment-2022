@@ -78,7 +78,7 @@ const SingleTask = ({task, forHeader}: SingleTaskProps) => {
             );
         })
     ) : (
-        <MenuItem value="1" />
+        <MenuItem value="1"/>
     );
 
     const token = useAppSelector(selectToken);

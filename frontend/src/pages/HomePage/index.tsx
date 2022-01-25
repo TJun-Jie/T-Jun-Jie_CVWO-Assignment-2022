@@ -9,7 +9,7 @@ import axios from "axios";
 import {Task} from "../../shared/types/task";
 import {useAppDispatch, useAppSelector} from "../../redux/hooks";
 import {selectTasks, setTasks} from "../../redux/slices/taskSlice";
-import { withAuthenticationRequired} from "@auth0/auth0-react";
+import {withAuthenticationRequired} from "@auth0/auth0-react";
 import {selectLoading, selectToken} from "../../redux/slices/authSlice";
 import LoadingPage from "../Loading";
 
@@ -54,54 +54,54 @@ const HomePage = () => {
     }, [isLoading]);
 
     const renderTask = tasks ? (tasks.map(function (item: Task) {
-            return <SingleTask key={item._id} task={item} forHeader={false}/>;
-        })) : (<div />);
+        return <SingleTask key={item._id} task={item} forHeader={false}/>;
+    })) : (<div/>);
     if (error) {
         return (<BasicLayout>
-                <Box sx={{height: "100px"}}/>
-                <Typography sx={{color: "red", fontSize: "2rem"}}>{error}</Typography>
+            <Box sx={{height: "100px"}}/>
+            <Typography sx={{color: "red", fontSize: "2rem"}}>{error}</Typography>
 
-            </BasicLayout>);
+        </BasicLayout>);
     } else {
         return (<BasicLayout>
-                {isLoaded && !isLoading ? (<div>
-                        <Box sx={{height: "100px"}}/>
-                        <Box
-                            sx={{
-                                width: "50%", marginLeft: "auto", marginRight: "auto", textAlign: "start",
-                            }}
-                        >
-                            <Typography
-                                sx={{ml: "26.5px", color: "secondary.light"}}
-                                variant="h5"
-                            >
-                                {t("currentTask")}
-                            </Typography>
-                            <Box>
-                                <List>{renderTask}</List>
-                            </Box>
-                            {!showTaskCard && (<Button
-                                    className={styles.button}
-                                    color="secondary"
-                                    variant="contained"
-                                    onClick={() => setShowTaskCard(true)}
-                                    sx={{ml: "26.5px"}}
-                                >
-                                    Add Task
-                                </Button>)}
-
-                            {showTaskCard && (<NewTaskCard setShowTaskCard={setShowTaskCard}/>)}
-                        </Box>
-                    </div>) : (<Box
-                        sx={{
-                            width: "50%", mx: "auto", textAlign: "center",
-                        }}
+            {isLoaded && !isLoading ? (<div>
+                <Box sx={{height: "100px"}}/>
+                <Box
+                    sx={{
+                        width: "50%", marginLeft: "auto", marginRight: "auto", textAlign: "start",
+                    }}
+                >
+                    <Typography
+                        sx={{ml: "26.5px", color: "secondary.light"}}
+                        variant="h5"
                     >
-                        <Box sx={{height: "100px"}} />
+                        {t("currentTask")}
+                    </Typography>
+                    <Box>
+                        <List>{renderTask}</List>
+                    </Box>
+                    {!showTaskCard && (<Button
+                        className={styles.button}
+                        color="secondary"
+                        variant="contained"
+                        onClick={() => setShowTaskCard(true)}
+                        sx={{ml: "26.5px"}}
+                    >
+                        Add Task
+                    </Button>)}
 
-                        <CircularProgress color="info"/>
-                    </Box>)}
-            </BasicLayout>);
+                    {showTaskCard && (<NewTaskCard setShowTaskCard={setShowTaskCard}/>)}
+                </Box>
+            </div>) : (<Box
+                sx={{
+                    width: "50%", mx: "auto", textAlign: "center",
+                }}
+            >
+                <Box sx={{height: "100px"}}/>
+
+                <CircularProgress color="info"/>
+            </Box>)}
+        </BasicLayout>);
     }
 };
 
