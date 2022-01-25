@@ -7,16 +7,17 @@ import {
   Typography,
 } from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
-import { useState } from "react";
+import {useEffect, useState} from "react";
 import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import CustomDrawer from "./CustomDrawer";
 import SearchIcon from "@mui/icons-material/Search";
-import { useAppSelector } from "../redux/hooks";
+import {useAppDispatch, useAppSelector} from "../redux/hooks";
 import SingleTask from "../components/SingleTask";
 import { selectTasks } from "../redux/slices/taskSlice";
 import { Task } from "../shared/types/task";
 import {useAuth0} from "@auth0/auth0-react";
+import {setAuth} from "../redux/slices/authSlice";
 
 const searchStyles = {
   backgroundColor: "primary.dark",
@@ -34,12 +35,36 @@ const searchStyles = {
 const Header = () => {
   const [drawer, setDrawer] = useState(false);
   const { t } = useTranslation();
+  const dispatch = useAppDispatch();
 
   const {
+    getAccessTokenSilently,
+    isLoading,
     isAuthenticated,
     loginWithRedirect,
-    logout,
+      logout
   } = useAuth0();
+
+  const getToken = async () => {
+    try {
+      const token = await getAccessTokenSilently({
+        audience: "https://tjunjie-cvwo-api/",
+      });
+        dispatch(setAuth({ token: token }));
+    } catch(error) {
+      console.log(error);
+    }
+
+
+  }
+
+
+  useEffect(() => {
+    if (!isLoading) {
+      getToken();
+    }
+  }, [isLoading])
+
 
   const [searchQuery, setSearchQuery] = useState("");
   const tasks = useAppSelector(selectTasks);

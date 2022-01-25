@@ -9,7 +9,8 @@ import axios from "axios";
 import { useAppDispatch, useAppSelector } from "../../redux/hooks";
 import { selectTasks, setTasks } from "../../redux/slices/taskSlice";
 import {withAuthenticationRequired} from "@auth0/auth0-react";
-import Login from "../Login";
+import Login from "../Loading";
+import {selectLoading, selectToken} from "../../redux/slices/authSlice";
 
 const HighPriorityPage = () => {
   const { t } = useTranslation();
@@ -19,11 +20,17 @@ const HighPriorityPage = () => {
   const tasks = useAppSelector(selectTasks);
   const dispatch = useAppDispatch();
   const [error, setError] = useState("");
+  const token = useAppSelector(selectToken);
+  const isLoading = useAppSelector(selectLoading);
 
   const getData = async () => {
     try {
       const res = await axios.get(
-        `${process.env.REACT_APP_API_END_POINT}/v1/tasks/priorities/3`
+        `${process.env.REACT_APP_API_END_POINT}/v1/tasks/priorities/3`, {
+            headers: {
+              Authorization: `Bearer ${token}`
+            }
+          }
       );
       dispatch(setTasks(res.data));
       setIsLoaded(true);
@@ -34,7 +41,10 @@ const HighPriorityPage = () => {
   };
 
   useEffect(() => {
-    getData();
+    if (!isLoading) {
+      getData();
+
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -56,7 +66,7 @@ const HighPriorityPage = () => {
   } else {
     return (
       <BasicLayout>
-        {isLoaded ? (
+        {isLoaded  && !isLoading  ? (
           <div>
             <Box sx={{ height: "100px" }} />
             <Box

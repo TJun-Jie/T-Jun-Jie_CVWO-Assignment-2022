@@ -9,23 +9,20 @@ import axios from "axios";
 import {Task} from "../../shared/types/task";
 import {useAppDispatch, useAppSelector} from "../../redux/hooks";
 import {selectTasks, setTasks} from "../../redux/slices/taskSlice";
-import {useAuth0, withAuthenticationRequired} from "@auth0/auth0-react";
-import Login from "../Login";
+import { withAuthenticationRequired} from "@auth0/auth0-react";
+import {selectLoading, selectToken} from "../../redux/slices/authSlice";
+import LoadingPage from "../Loading";
 
 const HomePage = () => {
-
-    const {
-        getAccessTokenSilently,
-        isLoading,
-        isAuthenticated,
-        loginWithRedirect,
-    } = useAuth0();
 
 
     const {t} = useTranslation();
     const styles = useBasicStyles();
     const tasks = useAppSelector(selectTasks);
     const dispatch = useAppDispatch();
+    const token = useAppSelector(selectToken);
+    const isLoading = useAppSelector(selectLoading);
+
 
     const [showTaskCard, setShowTaskCard] = useState(false);
 
@@ -33,9 +30,6 @@ const HomePage = () => {
     const [error, setError] = useState("");
     const getData = async () => {
         try {
-            const token = await getAccessTokenSilently({
-                audience: "https://tjunjie-cvwo-api/",
-            });
             const res = await axios.get(`${process.env.REACT_APP_API_END_POINT}/v1/tasks`, {
                 headers: {
                     Authorization: `Bearer ${token}`
@@ -56,40 +50,25 @@ const HomePage = () => {
         if (!isLoading) {
             // eslint-disable-next-line react-hooks/exhaustive-deps
             getData();
-
         }
     }, [isLoading]);
 
-    const renderTask = tasks ? (
-        tasks.map(function (item: Task, i) {
+    const renderTask = tasks ? (tasks.map(function (item: Task) {
             return <SingleTask key={item._id} task={item} forHeader={false}/>;
-        })
-    ) : (
-        <div></div>
-    );
+        })) : (<div />);
     if (error) {
-        return (
-            <BasicLayout>
+        return (<BasicLayout>
                 <Box sx={{height: "100px"}}/>
                 <Typography sx={{color: "red", fontSize: "2rem"}}>{error}</Typography>
-                <button className="btn btn-primary btn-lg btn-login btn-block"
-                        onClick={() => loginWithRedirect({})}>Sign in
-                </button>
 
-            </BasicLayout>
-        );
+            </BasicLayout>);
     } else {
-        return (
-            <BasicLayout>
-                {isLoaded || isLoading ? (
-                    <div>
+        return (<BasicLayout>
+                {isLoaded && !isLoading ? (<div>
                         <Box sx={{height: "100px"}}/>
                         <Box
                             sx={{
-                                width: "50%",
-                                marginLeft: "auto",
-                                marginRight: "auto",
-                                textAlign: "start",
+                                width: "50%", marginLeft: "auto", marginRight: "auto", textAlign: "start",
                             }}
                         >
                             <Typography
@@ -101,8 +80,7 @@ const HomePage = () => {
                             <Box>
                                 <List>{renderTask}</List>
                             </Box>
-                            {!showTaskCard && (
-                                <Button
+                            {!showTaskCard && (<Button
                                     className={styles.button}
                                     color="secondary"
                                     variant="contained"
@@ -110,37 +88,24 @@ const HomePage = () => {
                                     sx={{ml: "26.5px"}}
                                 >
                                     Add Task
-                                </Button>
-                            )}
+                                </Button>)}
 
-                            {showTaskCard && (
-                                <NewTaskCard setShowTaskCard={setShowTaskCard}/>
-                            )}
+                            {showTaskCard && (<NewTaskCard setShowTaskCard={setShowTaskCard}/>)}
                         </Box>
-                    </div>
-                ) : (
-                    <Box
+                    </div>) : (<Box
                         sx={{
-                            width: "50%",
-                            mx: "auto",
-                            textAlign: "center",
+                            width: "50%", mx: "auto", textAlign: "center",
                         }}
                     >
-                        <Box sx={{height: "100px"}}></Box>
+                        <Box sx={{height: "100px"}} />
 
                         <CircularProgress color="info"/>
-                    </Box>
-                )}
-                {!isAuthenticated && (
-                    <button className="btn btn-primary btn-lg btn-login btn-block"
-                            onClick={() => loginWithRedirect({})}>Sign in</button>
-                )}
-            </BasicLayout>
-        );
+                    </Box>)}
+            </BasicLayout>);
     }
 };
 
 
 export default withAuthenticationRequired(HomePage, {
-    onRedirecting: () => <Login/>,
+    onRedirecting: () => <LoadingPage/>,
 });

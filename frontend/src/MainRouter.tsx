@@ -5,7 +5,7 @@ import LowPriority from "./pages/labels/LowPriority";
 import MediumPriority from "./pages/labels/MediumPriority";
 import HighPriority from "./pages/labels/HighPriority";
 import NotFound from "./pages/NotFound";
-import Login from "./pages/Login";
+import Login from "./pages/Loading";
 
 // @ts-ignore
 

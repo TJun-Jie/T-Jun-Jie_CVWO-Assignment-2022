@@ -14,7 +14,6 @@ const initialState: TaskState = {
 
 export const taskSlice = createSlice({
   name: "task",
-  // `createSlice` will infer the state type from the `initialState` argument
   initialState,
   reducers: {
     setTasks: (state, action) => {
@@ -25,7 +24,6 @@ export const taskSlice = createSlice({
 
 export const { setTasks } = taskSlice.actions;
 
-// Other code such as selectors can use the imported `RootState` type
 export const selectTasks = (state: RootState) => state.allTasks.tasks;
 
 export default taskSlice.reducer;

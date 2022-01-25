@@ -4,16 +4,16 @@ import theme from "./layouts/basicTheme";
 import MainRouter from "./MainRouter";
 import {ThemeProvider} from "@mui/material/styles";
 import history from "./history";
-import { Auth0Provider } from '@auth0/auth0-react';
+import {Auth0Provider} from '@auth0/auth0-react';
 import config from "./auth_config.json";
 
 // @ts-ignore
 const onRedirectCallback = (appState) => {
-    // Use the router's history module to replace the url
     history.replace(appState?.returnTo || window.location.pathname);
 };
 
 function App() {
+
     return (
         <Auth0Provider
             domain={config.domain}

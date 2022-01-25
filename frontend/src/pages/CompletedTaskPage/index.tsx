@@ -9,7 +9,8 @@ import axios from "axios";
 import { useAppDispatch, useAppSelector } from "../../redux/hooks";
 import { selectTasks, setTasks } from "../../redux/slices/taskSlice";
 import {withAuthenticationRequired} from "@auth0/auth0-react";
-import Login from "../Login";
+import Login from "../Loading";
+import {selectLoading, selectToken} from "../../redux/slices/authSlice";
 
 const CompletedTaskPage = () => {
   const { t } = useTranslation();
@@ -21,9 +22,17 @@ const CompletedTaskPage = () => {
 
   const [error, setError] = useState("");
 
+  const token = useAppSelector(selectToken);
+
+  const isLoading = useAppSelector(selectLoading);
+
   const getData = async () => {
     try {
-      const res = await axios.get(`${process.env.REACT_APP_API_END_POINT}/v1/tasks/completed`);
+      const res = await axios.get(`${process.env.REACT_APP_API_END_POINT}/v1/tasks/completed`, {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      });
       dispatch(setTasks(res.data));
       setIsLoaded(true);
     } catch (error) {
@@ -33,8 +42,10 @@ const CompletedTaskPage = () => {
   };
 
   useEffect(() => {
-    getData(); // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+    if(!isLoading){
+      getData(); // eslint-disable-next-line react-hooks/exhaustive-deps
+    }
+  }, [isLoading]);
 
   const renderTask = tasks ? (
     tasks.map(function (item: Task, i) {
@@ -53,7 +64,7 @@ const CompletedTaskPage = () => {
   } else {
     return (
       <BasicLayout>
-        {isLoaded ? (
+        {isLoaded  && !isLoading  ? (
           <div>
             <Box sx={{ height: "100px" }} />
             <Box

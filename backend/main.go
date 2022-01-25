@@ -27,9 +27,9 @@ func main() {
 	r.HandleFunc("/v1/priorities", getPriorities).Methods("GET")
 	r.HandleFunc("/v1/priority/{id}", getPriority).Methods("GET")
 	r.Handle("/v1/tasks", middleware.EnsureValidToken()(http.HandlerFunc(getTasks))).Methods("GET", "OPTIONS")
-	r.Handle("/v1/tasks/completed", middleware.EnsureValidToken()(http.HandlerFunc(getCompletedTasks))).Methods("GET")
-	r.Handle("/v1/tasks/priorities/{priorityID}", middleware.EnsureValidToken()(http.HandlerFunc(getTaskByPriority))).Methods("GET")
-	r.Handle("/v1/tasks/{id}", middleware.EnsureValidToken()(http.HandlerFunc(getTask))).Methods("GET")
+	r.Handle("/v1/tasks/completed", middleware.EnsureValidToken()(http.HandlerFunc(getCompletedTasks))).Methods("GET", "OPTIONS")
+	r.Handle("/v1/tasks/priorities/{priorityID}", middleware.EnsureValidToken()(http.HandlerFunc(getTaskByPriority))).Methods("GET", "OPTIONS")
+	r.Handle("/v1/tasks/{id}", middleware.EnsureValidToken()(http.HandlerFunc(getTask))).Methods("GET", "OPTIONS")
 	r.Handle("/v1/tasks", middleware.EnsureValidToken()(http.HandlerFunc(createTask))).Methods("POST", "OPTIONS")
 	r.Handle("/v1/tasks/{id}", middleware.EnsureValidToken()(http.HandlerFunc(updateTask))).Methods("PUT", "OPTIONS")
 	r.Handle("/v1/tasks/{id}", middleware.EnsureValidToken()(http.HandlerFunc(deleteTask))).Methods("DELETE", "OPTIONS")
@@ -37,22 +37,16 @@ func main() {
 	// set our port address
 
 	corsWrapper := cors.New(cors.Options{
-		AllowedMethods: []string{"GET", "POST"},
-		AllowedHeaders: []string{"Content-Type", "Origin", "Accept", "*"},
+		AllowedMethods:   []string{"GET", "POST", "PUT", "DELETE", "HEAD"},
+		AllowedHeaders:   []string{"Content-Type", "Origin", "Accept", "*"},
+		AllowCredentials: true,
+		AllowedOrigins:   []string{"*"},
 	})
 
 	log.Fatal(http.ListenAndServe(":8000", corsWrapper.Handler(r)))
 }
 
-func enableCors(w *http.ResponseWriter) {
-	(*w).Header().Set("Access-Control-Allow-Credentials", "true")
-	(*w).Header().Set("Access-Control-Allow-Origin", "*")
-	(*w).Header().Set("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE, HEAD")
-	(*w).Header().Set("Access-Control-Allow-Headers", "Accept, Content-Type, Content-Length, Accept-Encoding, X-CSRF-Token, Authorization, Origin,")
-}
-
 func getPriorities(w http.ResponseWriter, r *http.Request) {
-	enableCors(&w)
 	w.Header().Set("Content-Type", "application/json")
 
 	var priority []models.Priority
@@ -89,7 +83,6 @@ func getPriorities(w http.ResponseWriter, r *http.Request) {
 }
 
 func getPriority(w http.ResponseWriter, r *http.Request) {
-	enableCors(&w)
 
 	w.Header().Set("Content-Type", "application/json")
 
@@ -113,7 +106,6 @@ func getPriority(w http.ResponseWriter, r *http.Request) {
 }
 
 func getTasks(w http.ResponseWriter, r *http.Request) {
-	enableCors(&w)
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
 
 	var task []models.Task
@@ -152,7 +144,6 @@ func getTasks(w http.ResponseWriter, r *http.Request) {
 }
 
 func getCompletedTasks(w http.ResponseWriter, r *http.Request) {
-	enableCors(&w)
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
 
 	var task []models.Task
@@ -191,7 +182,6 @@ func getCompletedTasks(w http.ResponseWriter, r *http.Request) {
 }
 
 func getTaskByPriority(w http.ResponseWriter, r *http.Request) {
-	enableCors(&w)
 
 	w.Header().Set("Content-Type", "application/json")
 
@@ -233,7 +223,6 @@ func getTaskByPriority(w http.ResponseWriter, r *http.Request) {
 }
 
 func getTask(w http.ResponseWriter, r *http.Request) {
-	enableCors(&w)
 
 	w.Header().Set("Content-Type", "application/json")
 
@@ -254,7 +243,7 @@ func getTask(w http.ResponseWriter, r *http.Request) {
 }
 
 func createTask(w http.ResponseWriter, r *http.Request) {
-	enableCors(&w)
+
 	if r.Method == http.MethodPost {
 		w.Header().Set("Content-Type", "application/json")
 
@@ -275,10 +264,11 @@ func createTask(w http.ResponseWriter, r *http.Request) {
 }
 
 func updateTask(w http.ResponseWriter, r *http.Request) {
-	enableCors(&w)
+
 	w.Header().Set("Content-Type", "application/json")
 
 	if r.Method == http.MethodPut {
+
 		var params = mux.Vars(r)
 
 		id, _ := primitive.ObjectIDFromHex(params["id"])
@@ -310,7 +300,6 @@ func updateTask(w http.ResponseWriter, r *http.Request) {
 }
 
 func deleteTask(w http.ResponseWriter, r *http.Request) {
-	enableCors(&w)
 
 	// Set header
 	w.Header().Set("Content-Type", "application/json")

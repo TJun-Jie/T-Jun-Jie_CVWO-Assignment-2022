@@ -16,9 +16,10 @@ import { useFormik } from "formik";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import * as yup from "yup";
-import { useAppDispatch } from "../redux/hooks";
+import {useAppDispatch, useAppSelector} from "../redux/hooks";
 import { setTasks } from "../redux/slices/taskSlice";
 import { Priority } from "../shared/types/priority";
+import {selectToken} from "../redux/slices/authSlice";
 
 const validationSchema = yup.object({
   title: yup.string().required("Please enter a title"),
@@ -82,6 +83,7 @@ const NewTaskCard = ({ setShowTaskCard }: NewTaskCardProps) => {
   );
 
   // ----------------------------------------------------------------------
+  const token = useAppSelector(selectToken);
 
   const formik = useFormik({
     initialValues: {
@@ -92,13 +94,19 @@ const NewTaskCard = ({ setShowTaskCard }: NewTaskCardProps) => {
     validationSchema: validationSchema,
     onSubmit: async (values) => {
       try {
+
         await axios.post(`${process.env.REACT_APP_API_END_POINT}/v1/tasks`, {
+
           completed: false,
           ...values,
-        });
+        }, {  headers: {
+            Authorization: `Bearer ${token}`
+          }});
 
         // refetch data
-        const res = await axios.get(`${process.env.REACT_APP_API_END_POINT}/v1/tasks`);
+        const res = await axios.get(`${process.env.REACT_APP_API_END_POINT}/v1/tasks`, {  headers: {
+            Authorization: `Bearer ${token}`
+          }});
         dispatch(setTasks(res.data));
         setShowTaskCard(false);
       } catch (error) {
